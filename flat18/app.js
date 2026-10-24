@@ -30,17 +30,15 @@
     } catch (e) {}
     return null;
   }
-  function setMode(mode, remember) {
+  let realMode = 'day'; // the clock's (or the visitor's) pick; the story only borrows the page while it is pinned
+  function setMode(mode, remember, fromStory) {
     document.documentElement.dataset.mode = mode;
+    if (!fromStory) realMode = mode;
     $('#mode-txt').textContent = mode === 'night' ? 'Night' : 'Day';
     $('#mode-btn').setAttribute('aria-pressed', mode === 'night');
-    $$('.hero-photo img').forEach(i => i.classList.toggle('off', i.dataset.mode !== mode));
-    const cap = $('.hero-photo figcaption');
-    const on = $(`.hero-photo img[data-mode="${mode}"]`);
-    if (cap && on) cap.textContent = on.alt;
     if (remember) try { localStorage.setItem(KEY, JSON.stringify({ mode, t: Date.now() })); } catch (e) {}
   }
-  $('#mode-btn').addEventListener('click', () => setMode(document.documentElement.dataset.mode === 'night' ? 'day' : 'night', true));
+  $('#mode-btn').addEventListener('click', () => { storyDriven = false; setMode(document.documentElement.dataset.mode === 'night' ? 'day' : 'night', true); });
 
   /* ---------- tumbling headings, like the printed menu ---------- */
   function wob(text, cls = '') {
@@ -65,27 +63,28 @@
       .map(([n, line]) => ({ ...find(n), line }));
     const words = [['A', 2, 6, -4], ['hug', 9, 20, 5], ['for your', 40, 3, 3], ['tastebuds', 63, 18, -5], ['bringing', 58, 56, 5], ['classics', 76, 70, -4], ['back', 72, 88, 7]];
 
+    /* hero = the green menu cover lying on the table, seen from above. Planes, back to front: paper + light,
+       the printed tumbling words, the printed wordmark, the plate set on the cover, the coffee closest to you.
+       Scroll lifts them apart at different rates (--q), the pointer leans them (--mx/--my). */
     return `
-<section class="hero">
+<section class="hero" id="hero">
+  <div class="hero-light" aria-hidden="true"></div>
   <div class="wrap hero-in">
-    <div>
-      <div class="hero-words" aria-label="A hug for your tastebuds. Bringing classics back.">
-        ${words.map(([w, x, y, r], i) => `<span class="w" aria-hidden="true" style="--x:${x};top:${y}%;rotate:${r}deg;animation-delay:${.08 * i + .1}s">${w}</span>`).join('')}
-      </div>
-      <h1 class="hero-mark">F<i>LA</i>T<sup>18</sup></h1>
+    <div class="hero-words" aria-label="A hug for your tastebuds. Bringing classics back.">
+      ${words.map(([w, x, y, r], i) => `<span class="w" aria-hidden="true" style="--x:${x};top:${y}%;rotate:${r}deg;animation-delay:${.06 * i + .1}s">${w}</span>`).join('')}
     </div>
-    <div class="hero-side">
-      <figure class="hero-photo">
-        <img data-mode="day" src="${photo('food/turkish-eggs')}" alt="Turkish Eggs, on the brunch menu" fetchpriority="high">
-        <img data-mode="night" class="off" src="${photo('food/steak-and-eggs')}" alt="Steak and Eggs, Black Angus striploin" fetchpriority="high">
-        <figcaption class="glass"></figcaption>
-      </figure>
-      <span class="now-pill ${st.open ? '' : 'closed'}"><b></b>${st.text}</span>
-      <p style="margin:0;max-width:40ch;opacity:.9">All-day brunch, sourdough sandwiches and pasta in a glass-walled room in Mutiara Damansara. Dinner specials from 5pm.</p>
+    <div class="hero-copy">
+      <p>All-day brunch, sourdough sandwiches and pasta in Mutiara Damansara. Dinner specials from 5pm.</p>
       <div class="hero-cta">
         <a class="btn btn-butter" href="#menu">See the full menu</a>
-        <a class="btn btn-ghost-light" href="${L.reserve.wa}" target="_blank" rel="noopener">Book a table on WhatsApp</a>
+        <a class="btn btn-ghost-light" href="${L.reserve.wa}" target="_blank" rel="noopener">Book a table</a>
       </div>
+    </div>
+    <h1 class="hero-mark">F<i>LA</i>T<sup>18</sup></h1>
+    <div class="hero-table" aria-hidden="true">
+      <img class="hp hp-plate hp-day" src="assets/cut/turkish-eggs.webp" alt="" width="842" height="900" fetchpriority="high">
+      <img class="hp hp-plate hp-night" src="assets/cut/miso-smoked-duck-pasta.webp" alt="" width="416" height="416">
+      <img class="hp hp-cup" src="assets/cut/flat-white.webp" alt="" width="900" height="740">
     </div>
   </div>
 </section>
@@ -94,9 +93,14 @@
   <div class="story-pin">
     <div class="story-sky" aria-hidden="true"></div>
     <div class="wrap story-grid">
-      <div class="story-media">
-        <img class="sm-day" src="${photo('food/french-toast-banana-split')}" alt="" width="1200" height="1200" loading="lazy">
-        <img class="sm-night" src="${photo('food/miso-smoked-duck-pasta')}" alt="" width="601" height="793" loading="lazy">
+      <div class="story-table" aria-hidden="true">
+        <div class="story-shaft"></div>
+        <div class="story-lamp"></div>
+        <img class="st st-eggs" src="assets/cut/turkish-eggs.webp" alt="" width="842" height="900" loading="lazy">
+        <img class="st st-bread" src="assets/cut/sourdough-slices.webp" alt="" width="900" height="781" loading="lazy">
+        <img class="st st-cup" src="assets/cut/flat-white.webp" alt="" width="900" height="740" loading="lazy">
+        <img class="st st-pasta" src="assets/cut/miso-smoked-duck-pasta.webp" alt="" width="416" height="416" loading="lazy">
+        <p class="st-note" id="st-note"></p>
       </div>
       <div class="story-copy">
         <div class="sp sp-day">
@@ -153,7 +157,7 @@
 <section class="sec" id="classics">
   <div class="wrap">
     <div class="sec-head">
-      <div>${wob('The menu', 'eyebrow')}<h2>Classics, brought back</h2></div>
+      <h2>Classics, brought back</h2>
       <p>Sourdough sandwiches, proper pasta and plates you already know, each with one twist: kombu butter, zaalouk, miso, tobiko hollandaise.</p>
     </div>
     <div class="rail">
@@ -170,7 +174,7 @@
 <section class="sec cups">
   <div class="wrap">
     <div class="sec-head">
-      <div>${wob('From the bar', 'eyebrow')}<h2>Coffee worth the trip</h2></div>
+      <h2>Coffee worth the trip</h2>
       <p>Classic espresso, matcha and houjicha, plus a list of house signatures. Every one comes hot or iced unless it says otherwise.</p>
     </div>
     <div class="cup-grid">
@@ -191,15 +195,9 @@
       <figure><img src="assets/photos/space/table-spread.jpg" alt="A table of steak and eggs, pasta and charred carrots" loading="lazy"></figure>
     </div>
     <div>
-      ${wob('The room', 'eyebrow')}
       <div class="sec-head" style="margin-bottom:22px"><h2>Glass walls, green outside</h2></div>
       <p class="lede">A ground-floor room in Mutiara Damansara with glass on every side. Bright and easy at brunch, lower and slower once the sun goes down.</p>
-      <p style="color:var(--muted);max-width:52ch">Pork-free kitchen. Families welcome, with a kids' menu and babycinos. Ask about the private room for birthdays, team lunches and small celebrations.</p>
-      <div class="facts">
-        <div><b>9am</b><span>Opens daily</span></div>
-        <div><b>5pm</b><span>Dinner specials start</span></div>
-        <div><b>10pm</b><span>Last call</span></div>
-      </div>
+      <p style="color:var(--muted);max-width:52ch;margin:0">Pork-free kitchen. Families welcome, with a kids' menu and babycinos. Ask about the private room for birthdays, team lunches and small celebrations.</p>
     </div>
   </div>
 </section>
@@ -226,7 +224,6 @@
       ${['v160', 'v75', 'v33'].map(v => `<video src="assets/events/${v}.mp4" poster="assets/events/${v}.jpg" muted loop playsinline autoplay preload="metadata"></video>`).join('')}
     </div>
     <div>
-      ${wob('FLAT18 x The Bread Bar', 'eyebrow')}
       <div class="sec-head" style="margin-bottom:18px"><h2>Events, the whole room</h2></div>
       <p class="lede">Book out the restaurant for celebrations, corporate dinners and launches, or let us cater yours.</p>
       <ul class="pk-mini">
@@ -254,7 +251,6 @@
 <section class="sec" id="visit">
   <div class="wrap visit">
     <div>
-      ${wob('Come by', 'eyebrow')}
       <div class="sec-head" style="margin-bottom:28px"><h2>Visit <span class="wm">F<i>LA</i>T<sup>18</sup></span></h2></div>
       <dl>
         <div><dt>Address</dt><dd>${F.address.join('<br>')}<small><a href="${F.maps}" target="_blank" rel="noopener">Open in Google Maps →</a></small></dd></div>
@@ -286,7 +282,14 @@
 
   /* day→night scroll story: scroll progress p (0–1) through the pinned section drives the sky tint,
      the plate swap, the self-drawing sun arc and a 9am→10pm clock. Reduced motion shows the static .dn split. */
+  /* The table fills up through the day (eggs at 9, sourdough by noon, a flat white mid-afternoon), the window light
+     sweeps across it, and at 5pm it is cleared for dinner. While the story holds the screen, the whole site (header,
+     announcement bar, day/night switch) follows the story's clock; once it lets go, the site goes back to the real time. */
   let arcLen = null; // x position (0–1) at each 1% of the arc's length, built on first use
+  const clamp01 = v => Math.min(1, Math.max(0, v));
+  const ease = v => 1 - Math.pow(1 - clamp01(v), 3);
+  const arrive = (p, h0, h1) => ease((p * 13 + 9 - h0) / (h1 - h0)); // 0→1 between two clock hours
+  let storyDriven = false;
   function updateStory() {
     const s = $('#story'); if (!s || !s.offsetParent) return;
     const r = s.getBoundingClientRect(), pin = $('.story-pin', s).offsetHeight;
@@ -294,6 +297,23 @@
     const p = forcedP ? +forcedP : Math.min(1, Math.max(0, -r.top / Math.max(1, r.height - pin)));
     const b = Math.min(1, Math.max(0, (p - .575) / .08)); // short crossfade centred on 5pm (p = 8/13)
     s.style.setProperty('--p', p.toFixed(4));
+    s.style.setProperty('--a1', arrive(p, 8.6, 9.6).toFixed(3));
+    s.style.setProperty('--a2', arrive(p, 11.2, 12.4).toFixed(3));
+    s.style.setProperty('--a3', arrive(p, 14.2, 15.4).toFixed(3));
+    s.style.setProperty('--a4', arrive(p, 17.1, 18.2).toFixed(3));
+    const hr = 9 + p * 13;
+    $('#st-note').textContent = hr >= 20 ? 'Open until 10pm' : hr >= 17 ? 'Miso Smoked Duck Pasta, after 5pm' : hr >= 14.6 ? 'A flat white for the afternoon' : hr >= 11.8 ? 'Sourdough with salted butter' : 'Turkish Eggs at 9am';
+    // whole-site regrade while the story is holding the screen (not under ?story=, which is for still shots)
+    const hdrH = $('#hdr').offsetHeight;
+    const held = !forcedP && r.top <= hdrH + 2 && r.bottom >= innerHeight - 2;
+    if (held) {
+      const want = b >= .5 ? 'night' : 'day';
+      storyDriven = true;
+      if (document.documentElement.dataset.mode !== want) setMode(want, false, true);
+    } else if (storyDriven) {
+      storyDriven = false;
+      setMode(realMode, false, true);
+    }
     // the arc's x is linear in t, but its length isn't: draw the stroke up to the sun, not to p of the length
     if (!arcLen) { const path = $('.arc-draw', s), L = path.getTotalLength(); arcLen = []; for (let i = 0; i <= 100; i++) arcLen.push(path.getPointAtLength(L * i / 100).x / 1000); }
     let k = 0; while (k < 100 && arcLen[k + 1] <= p) k++;
@@ -303,11 +323,30 @@
     s.classList.toggle('is-night', b >= .5);
     // sun position on the quadratic arc M0,110 Q500,-70 1000,110 (viewBox 1000x120)
     const t = p, x = 1000 * t, y = (1 - t) * (1 - t) * 110 + 2 * (1 - t) * t * -70 + t * t * 110;
-    const sun = $('#sun');
-    sun.style.left = (x / 10) + '%'; sun.style.top = (y / 120 * 70) + 'px'; // the arc's svg is 70px tall
+    const sun = $('#sun'), tw = sun.parentElement.clientWidth;
+    sun.style.transform = `translate(${(x / 1000 * tw).toFixed(1)}px, ${(y / 120 * 70).toFixed(1)}px)`; // the arc's svg is 70px tall
     const mins = Math.round((9 * 60 + p * 13 * 60) / 15) * 15, h = Math.floor(mins / 60), m = mins % 60;
     $('#story-clock').textContent = `${((h + 11) % 12) + 1}:${String(m).padStart(2, '0')}${h < 12 ? 'am' : 'pm'}`;
   }
+
+  /* hero planes: --q = how far the hero has scrolled away (0–1); CSS gives each plane its own rate */
+  function updateHero() {
+    const h = $('#hero'); if (!h) return;
+    const q = clamp01(scrollY / Math.max(1, h.offsetHeight));
+    h.style.setProperty('--q', q.toFixed(4));
+  }
+  // pointer lean, desktop only and never under reduced motion: the plates sit nearer than the print, so they shift more
+  const leanOK = matchMedia('(hover: hover) and (pointer: fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let leanRaf = 0;
+  if (leanOK) addEventListener('pointermove', e => {
+    if (leanRaf) return;
+    leanRaf = requestAnimationFrame(() => {
+      leanRaf = 0;
+      const h = $('#hero'); if (!h || scrollY > h.offsetHeight) return;
+      h.style.setProperty('--mx', ((e.clientX / innerWidth) * 2 - 1).toFixed(3));
+      h.style.setProperty('--my', ((e.clientY / innerHeight) * 2 - 1).toFixed(3));
+    });
+  }, { passive: true });
 
   function placeNowMarker() {
     const el = $('#day-now'); if (!el) return;
@@ -328,7 +367,7 @@
       <span class="mi-name">${esc(it.n)}${tag}</span>
       <span class="mi-price">${it.p != null ? money(it.p) : ''}</span>
       ${it.d ? `<p class="mi-desc">${esc(it.d)}</p>` : ''}
-      ${it.extra ? `<div class="mi-extra">${it.extra.map(([a, b]) => `<div><span>${esc(a)}</span><span>${b}</span></div>`).join('')}</div>` : ''}
+      ${it.extra ? `<div class="mi-extra">${it.extra.map(([a, b]) => `<div><span>${esc(a.replace(/ — /g, ': '))}</span><span>${b}</span></div>`).join('')}</div>` : ''}
     </div>`;
   }
   function group(g) {
@@ -371,7 +410,8 @@
     <p class="fineprint">All prices are stated in Ringgit Malaysia (RM). Ask the team about allergens.</p>
   </div>
   <aside class="peek" aria-hidden="true">
-    <div class="peek-frame"><img id="peek-img" src="${photo('food/salt-beef-sandwich')}" alt=""><p class="peek-cap glass" id="peek-cap">Salt Beef Sandwich</p></div>
+    <div class="peek-frame"><img id="peek-img" src="${photo('food/salt-beef-sandwich')}" alt=""></div>
+    <p class="peek-cap" id="peek-cap">Salt Beef Sandwich</p>
     <p class="peek-hint">Hover a dish to see it. Click for a closer look.</p>
   </aside>
 </div>`;
@@ -448,7 +488,7 @@
 
 <div class="wrap evbody">
   <section class="msec" id="ev-packages">
-    <div class="sec-head"><div>${wob('Whole restaurant bookout', 'eyebrow')}<h2>Four ways to host</h2></div>
+    <div class="sec-head"><h2>Four ways to host</h2>
       <p>Two buffets and two plated dinners, priced per guest. Swaps and small changes are welcome; just ask.</p></div>
     <div class="pk-grid">
       ${[...E.buffets.map(p => [p, 'Buffet']), ...E.plated.map(p => [p, '3-course plated'])].map(([p, k]) => `<a class="pk" href="#events-${p.id}">
@@ -506,7 +546,7 @@
   </section>
 
   <section class="msec" id="ev-gallery">
-    <div class="sec-head"><div>${wob('Past events', 'eyebrow')}<h2>From the room</h2></div>
+    <div class="sec-head"><h2>From the room</h2>
       <p>Launches, team dinners, birthdays and off-site catering. Tap any photo for a closer look.</p></div>
     <div class="chips" role="group" aria-label="Filter the gallery">
       <button class="chip on" data-filter="all" aria-pressed="true">All</button>
@@ -523,7 +563,6 @@
   <section class="msec" id="ev-enquire">
     <div class="enq">
       <div>
-        ${wob('Plan an event', 'eyebrow')}
         <h2 style="font-size:clamp(40px,5vw,64px);font-weight:300">Tell us the plan</h2>
         <p style="color:var(--muted);max-width:44ch;margin-top:14px">Fill this in and we'll open WhatsApp with your message ready to send. Events and bookouts go to our reservations line; canapés and catering go to the catering team.</p>
         <dl class="enq-lines">
@@ -641,9 +680,10 @@
       page = want;
       app.innerHTML = want === 'menu' ? menu() : want === 'events' ? events() : home();
       app.classList.remove('page-in'); void app.offsetWidth; app.classList.add('page-in');
-      if (want === 'menu') wireMenu(); else if (want === 'events') wireEvents(); else { placeNowMarker(); updateStory(); }
+      if (want === 'menu') wireMenu(); else if (want === 'events') wireEvents(); else { placeNowMarker(); updateHero(); updateStory(); }
       quietVideos();
-      setMode(document.documentElement.dataset.mode);
+      storyDriven = false;
+      setMode(realMode);
     }
     closeDrawer(); closeLb();
     let target = null;
@@ -659,8 +699,8 @@
     spyTabs();
   }
   addEventListener('hashchange', route);
-  addEventListener('resize', () => { if (page === 'home') updateStory(); });
-  addEventListener('scroll', () => { $('#hdr').classList.toggle('scrolled', scrollY > 4); if (page !== 'home') spyTabs(); else updateStory(); }, { passive: true });
+  addEventListener('resize', () => { if (page === 'home') { updateHero(); updateStory(); } });
+  addEventListener('scroll', () => { $('#hdr').classList.toggle('scrolled', scrollY > 4); if (page !== 'home') spyTabs(); else { updateHero(); updateStory(); } }, { passive: true });
 
   /* ---------- boot ---------- */
   const st = status();

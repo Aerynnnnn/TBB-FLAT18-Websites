@@ -78,15 +78,18 @@
   /* ------------------------------------------------------------------ pages */
   const pages = {};
 
-  const HERO = [
-    { img: "sourdough-slices", eyebrow: "Sourdough bakery & café · Kuala Lumpur", title: "Redefining food",
-      text: "Handcrafted sourdough and pastries, all-day plates and specialty coffee, baked fresh every day in TTDI and Publika.",
-      cta: "View the menu", href: "#menu" },
-    { img: "tbb-big-breakfast", eyebrow: "Brunch · 8am to 5pm daily", title: "The big breakfast",
-      text: "Eggs your way, sweet potato hummus, crispy potatoes and our own sourdough.", cta: "See the brunch menu", href: "#menu-hearty" },
-    { img: "salted-caramel-macchiato", eyebrow: "Coffee · house blend", title: "Slow sips",
-      text: "Salted caramel macchiato, pistachio latte and matcha, made with our own house blend.", cta: "See the coffee menu", href: "#menu-coffee" },
-  ];
+  // "From flour to counter" (the page's peak): one line per stage of the loaf; the stage on the right follows them.
+  // Flour dust for the hero's atmosphere plane: fixed pseudo-random specks (same on every load), no animation.
+  const DUST = (() => {
+    let s = 7, out = "";
+    const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
+    for (let i = 0; i < 70; i++) {
+      const d = (0.8 + rnd() * 2.2).toFixed(1);
+      out += `<i style="left:${(rnd() * 100).toFixed(1)}%;top:${(rnd() * 60).toFixed(1)}%;width:${d}px;height:${d}px;opacity:${(0.18 + rnd() * 0.5).toFixed(2)}"></i>`;
+    }
+    return out;
+  })();
+  const BAKE_STEPS = ["Stone-milled flour.", "Water, salt and a living starter.", "A long, slow prove.", "Into the oven.", "Onto the counter, every morning."];
 
   // Product tile: photo or drawing on a soft card, name, one line of detail.
   const productCard = (media, name, meta, href, tag) => `
@@ -105,51 +108,51 @@
       ["prawn-toast", "Prawn Toast", 26],
     ];
     return `
-    <section class="hero" data-slider>
-      ${HERO.map((s, i) => `
-      <div class="slide${i ? "" : " on"}" aria-hidden="${i ? "true" : "false"}">
-        <img src="${photo(s.img)}" alt=""${i ? "" : ' fetchpriority="high"'}>
-        <div class="slide-copy wrap">
-          <p class="eyebrow light">${esc(s.eyebrow)}</p>
-          ${i ? `<h2 class="slide-title">${s.title}</h2>` : `<h1 class="slide-title">${s.title}</h1>`}
-          <p class="lede">${esc(s.text)}</p>
-          <a class="btn btn-pill" href="${s.href}">${esc(s.cta)}</a>
+    <section class="hs" data-hero>
+      <div class="hs-pin">
+        <div class="hs-plate" aria-hidden="true"><img src="assets/video/flour-mound.jpg" alt="" fetchpriority="high"></div>
+        <h1 class="hs-title">Redefining food</h1>
+        <div class="hs-loaf"><img src="assets/cutouts/sourdough.png" alt="A Bread Bar sourdough loaf resting on stone-milled flour" width="600" height="360"></div>
+        <div class="hs-dust" aria-hidden="true">${DUST}</div>
+        <img class="hs-front" src="assets/cutouts/pain-au-chocolat.png" alt="" aria-hidden="true" width="385" height="600">
+        <p class="hs-beat">Eight sourdough loaves, every one naturally leavened.</p>
+        <div class="hs-copy">
+          <p class="hs-lede">Sourdough, pastries, all-day plates and specialty coffee, baked fresh every day in TTDI and Publika.</p>
+          <div class="cta-row"><a class="btn" href="#menu">View the menu</a><button class="btn btn-ghost" data-chooser="order">Order delivery</button></div>
         </div>
-      </div>`).join("")}
-      <button class="hero-arrow prev" aria-label="Previous slide" data-slide="-1">‹</button>
-      <button class="hero-arrow next" aria-label="Next slide" data-slide="1">›</button>
-      <div class="hero-dots">${HERO.map((s, i) => `<button aria-label="Slide ${i + 1}" data-dot="${i}"${i ? "" : ' class="on"'}></button>`).join("")}</div>
+      </div>
     </section>
 
     <nav class="bigwords" aria-label="Explore">
       <a href="#bakery-loaves">Sourdough</a><a href="#menu-hearty">Brunch</a><a href="#menu-coffee">Coffee</a><a href="#shop">Shop</a>
     </nav>
 
-    <section class="oval-intro full-vid">
-      ${vid("dough-fold")}
+    <section class="oval-intro quiet">
       <div class="wrap">
-        <p class="eyebrow light">Welcome to</p>
+        <p class="eyebrow light">${esc(D.tagline)}</p>
         <h2>The Bread Bar</h2>
         <p class="oval-text">Our loaves are naturally leavened and made with stone-milled flours. They anchor everything on the menu, from the brunch plates and focaccia sandwiches to warm slices with truffle or kombu butter.</p>
-        <div class="stat-row">
-          <div><b>8</b><span>Signature loaves</span></div>
-          <div><b>13</b><span>Pastries daily</span></div>
-          <div><b>2</b><span>Homes in KL</span></div>
-        </div>
         <a class="btn btn-pill" href="#about">Read our story</a>
       </div>
     </section>
 
-    <section class="stories" data-scrolly>
-      <div class="wrap story-pin">
-        <div class="section-head reveal">
-          <div><p class="eyebrow">${esc(D.tagline)}</p><h2 class="display-xl">From flour to counter</h2></div>
+    <section class="bake" data-bake>
+      <div class="wrap bake-pin">
+        <div class="bake-text">
+          <h2 class="display-xl">From flour to counter</h2>
+          <div class="story-progress" aria-hidden="true"><span></span></div>
+          <ol class="bake-steps">${BAKE_STEPS.map((s) => `<li>${esc(s)}</li>`).join("")}</ol>
+          <nav class="bake-links" aria-label="From the bakery">
+            <a class="link-arrow" href="#bakery-loaves">Our sourdough</a><a class="link-arrow" href="#bakery-pastry">Pastries</a><a class="link-arrow" href="#about">Our story</a>
+          </nav>
         </div>
-        <div class="story-progress" aria-hidden="true"><span></span></div>
-        <div class="story-grid">
-          <a class="story reveal" href="#bakery-loaves">${vid("flour-sift", true)}<img class="story-cut" src="assets/cutouts/sourdough.png" alt="Sourdough loaf" loading="lazy"><span class="story-label">Sourdough</span></a>
-          <a class="story reveal" href="#bakery-pastry">${vid("flour-mound", true)}<img class="story-cut tall" src="assets/cutouts/pain-au-chocolat.png" alt="Pain au chocolat" loading="lazy"><span class="story-label">Pastries</span></a>
-          <a class="story story-words reveal" href="#about">${vid("bread-stop-motion")}<span class="story-big">Raw.<br><em>Earthy.</em><br>Progressive.</span><span class="story-label">Our story</span></a>
+        <div class="bake-stage" aria-hidden="true">
+          <div class="bk bk-flour">${vid("flour-sift", true)}</div>
+          <div class="bk bk-dough">${vid("dough-fold", true)}</div>
+          <div class="bk bk-glow"></div>
+          <div class="bk bk-loaf"><img class="bk-raw" src="assets/cutouts/sourdough.png" alt="" width="600" height="360"><img class="bk-baked" src="assets/cutouts/sourdough.png" alt="" width="600" height="360"></div>
+          <div class="bk bk-counter">${vid("bread-stop-motion")}</div>
+          <p class="bk-cap"></p>
         </div>
       </div>
     </section>
@@ -171,7 +174,7 @@
     <section class="section">
       <div class="wrap">
         <div class="section-head reveal">
-          <div><p class="eyebrow">On the table</p><h2>House favourites</h2></div>
+          <h2>House favourites</h2>
           <a class="link-arrow" href="#menu">See the full menu</a>
         </div>
         <div class="fav-grid">
@@ -187,7 +190,6 @@
     <section class="split on-blue">
       <div class="split-img">${vid("espresso")}</div>
       <div class="split-copy reveal">
-        <p class="eyebrow">Take it home</p>
         <h2>${esc(D.beans.name)}</h2>
         <p>${esc(D.beans.blurb)}</p>
         <div class="chips">${D.beans.notes.map((n) => `<span class="chip">${esc(n)}</span>`).join("")}</div>
@@ -214,7 +216,7 @@
     <section class="shop-teaser">
       <div class="wrap">
         <div class="section-head reveal">
-          <div><p class="eyebrow">Available now</p><h2 class="display-xl">The T.B.B shop</h2></div>
+          <h2 class="display-xl">The T.B.B shop</h2>
           <a class="link-arrow" href="#shop">Shop tees &amp; totes</a>
         </div>
         <div class="product-grid">
@@ -240,7 +242,7 @@
         <div class="duo">
           <a class="duo-card wide reveal" href="#events-wholesale">
             <img src="${photo("bread-country-brown")}" alt="" loading="lazy">
-            <div><p class="eyebrow light">For cafés &amp; businesses</p><h3>Wholesale breads &amp; pastries</h3><p>Our sourdough and pastries, baked for your café, hotel or office.</p><span class="link-arrow">Ask about wholesale</span></div>
+            <div><h3>Wholesale breads &amp; pastries</h3><p>Our sourdough and pastries, baked for your café, hotel or office.</p><span class="link-arrow">Ask about wholesale</span></div>
           </a>
         </div>
       </div>
@@ -248,7 +250,6 @@
 
     <section class="section tight on-dark" style="text-align:center">
       <div class="wrap reveal">
-        <p class="eyebrow">Follow along</p>
         <h2 style="font-size:clamp(34px,5vw,60px)">@thebreadbarmy</h2>
         <p style="opacity:.8;margin:16px auto 26px;max-width:520px">Fresh bakes, new drinks and what’s coming out of the oven next.</p>
         <a class="btn" href="${D.instagram}" target="_blank" rel="noopener">Follow on Instagram</a>
@@ -392,7 +393,7 @@
       <div class="wrap">
         <p class="eyebrow light">Baked fresh every morning</p>
         <h1>The Bakery</h1>
-        <p>Sourdough loaves, laminated pastries and cakes from our counter — to enjoy in, take away, or pre-order for the weekend.</p>
+        <p>Sourdough loaves, laminated pastries and cakes from our counter, to enjoy in, take away, or pre-order for the weekend.</p>
         <nav class="subnav on-dark" style="background:none">
           <a href="#bakery-loaves" style="color:var(--cream);border-color:rgba(255,251,234,.35)">Sourdough</a>
           <a href="#bakery-sourdough101" style="color:var(--cream);border-color:rgba(255,251,234,.35)">Sourdough 101</a>
@@ -406,7 +407,7 @@
     <section class="section" id="loaves">
       <div class="wrap">
         <div class="section-head reveal">
-          <div><p class="eyebrow">Naturally leavened</p><h2>Sourdough loaves</h2></div>
+          <h2>Sourdough loaves</h2>
           <p style="margin:0;color:var(--muted);max-width:380px">Tap “Bread notes” for flour, crust, tang and hydration on each loaf.</p>
         </div>
         <div class="loaf-grid">
@@ -450,7 +451,7 @@
 
     <section class="section on-dark" id="pastry">
       <div class="wrap">
-        <div class="section-head reveal"><div><p class="eyebrow">Laminated by hand</p><h2>Pastry</h2></div><p style="margin:0;opacity:.75">Prices in RM · while the counter lasts</p></div>
+        <div class="section-head reveal"><h2>Pastry</h2><p style="margin:0;opacity:.75">Prices in RM · while the counter lasts</p></div>
         <div class="pastry-grid">
           <div class="pastry-reel reveal">${vid("pastry-reel")}<span>At the counter</span></div>
           ${D.pastry.filter((x) => x[2]).map(([n, p, img, clip]) => `
@@ -468,7 +469,7 @@
 
     <section class="section" id="cakes">
       <div class="wrap">
-        <div class="section-head reveal"><div><p class="eyebrow">By the slice or whole</p><h2>Cakes</h2></div></div>
+        <div class="section-head reveal"><h2>Cakes</h2></div>
         <div class="cake-grid">
           <div class="panel reveal">
             <img class="panel-img" src="${photo("burnt-cheesecake-matcha")}" alt="Burnt cheesecake with matcha cream" loading="lazy" data-lb="${photo("burnt-cheesecake-matcha")}" data-cap="Burnt Cheesecake with Matcha Cream">
@@ -500,7 +501,7 @@
 
     <section class="section tight" style="text-align:center">
       <div class="wrap reveal">
-        <p class="eyebrow">Planning ahead?</p>
+        
         <h2 style="font-size:clamp(32px,4.4vw,52px)">Pre-order loaves &amp; pastries</h2>
         <p style="color:var(--muted);max-width:560px;margin:16px auto 26px">Order through our delivery partner for pick-up or delivery, or message the outlet directly for larger orders.</p>
         <div class="cta-row" style="justify-content:center"><button class="btn" data-chooser="order">Order online</button><button class="btn btn-ghost" data-chooser="preorder">Message an outlet</button></div>
@@ -566,7 +567,7 @@
     </section>
     <section class="section">
       <div class="prose reveal">
-        <p>The Bread Bar began in Taman Tun Dr Ismail with a simple idea: bake honest sourdough every day, and build a kitchen around it. The loaves still come first — long-fermented, made with stone-milled flours — and the rest of the menu grows out of them: toasted slices with truffle or kombu butter, focaccia sandwiches, brunch plates piled onto sourdough, and a counter full of laminated pastries.</p>
+        <p>The Bread Bar began in Taman Tun Dr Ismail with a simple idea: bake honest sourdough every day, and build a kitchen around it. The loaves still come first (long-fermented, made with stone-milled flours), and the rest of the menu grows out of them: toasted slices with truffle or kombu butter, focaccia sandwiches, brunch plates piled onto sourdough, and a counter full of laminated pastries.</p>
         <p>After nearly four years in TTDI, a second home opened at Publika Shopping Gallery in August 2025. Both outlets are open daily from 8am to 10pm, serving brunch until 5pm and hearty plates, pasta and specialty coffee all day.</p>
       </div>
     </section>
@@ -590,17 +591,17 @@
     </section>
     <section class="section on-blue">
       <div class="wrap">
-        <div class="section-head reveal"><div><p class="eyebrow">What we believe in</p><h2>Made the slow way</h2></div></div>
+        <div class="section-head reveal"><h2>Made the slow way</h2></div>
         <div class="pillars">
           <div class="pillar reveal"><h3>Real sourdough</h3><p>Eight signature loaves, naturally leavened, from a 400g country brown to a 90%-hydration focaccia.</p></div>
-          <div class="pillar reveal"><h3>House-made</h3><p>Brioche buns, English muffins, focaccia, pickles, pestos and sauces — made in our kitchen.</p></div>
+          <div class="pillar reveal"><h3>House-made</h3><p>Brioche buns, English muffins, focaccia, pickles, pestos and sauces, all made in our kitchen.</p></div>
           <div class="pillar reveal"><h3>Our own blend</h3><p>A house espresso blend of Brazilian, Nicaraguan and Ethiopian beans with notes of nuts, butterscotch and caramel.</p></div>
         </div>
       </div>
     </section>
     <section class="section tight space">
       <div class="wrap">
-        <div class="section-head reveal"><div><p class="eyebrow">Come in</p><h2>Our space</h2></div></div>
+        <div class="section-head reveal"><h2>Our space</h2></div>
         <div class="space-row">
           ${[["space-sign", "The Bread Bar"], ["space-dining", "The dining room"], ["space-service", "Dinner service"]].map(([img, cap]) => `
           <figure class="reveal" data-lb="${photo(img)}" data-cap="${cap}"><img src="${photo(img)}" alt="${cap}" loading="lazy"><figcaption>${cap}</figcaption></figure>`).join("")}
@@ -623,7 +624,7 @@
       <div class="split-copy reveal">
         <p class="eyebrow">Events &amp; private dining</p>
         <h2>Celebrate with us</h2>
-        <p>Birthdays, baby showers, team brunches or a long table for friends — tell us your date, outlet and headcount, and our team will get back to you with options.</p>
+        <p>Birthdays, baby showers, team brunches or a long table for friends? Tell us your date, outlet and headcount, and our team will get back to you with options.</p>
         <div class="cta-row"><a class="btn" href="${D.events.whatsapp}" target="_blank" rel="noopener">Enquire on WhatsApp</a><a class="btn btn-ghost" href="tel:+60176375626">${esc(D.events.phone)}</a></div>
       </div>
     </section>
@@ -638,7 +639,7 @@
     </section>
     <section class="section">
       <div class="wrap">
-        <div class="section-head reveal"><div><p class="eyebrow">How it works</p><h2>Getting in touch</h2></div></div>
+        <div class="section-head reveal"><h2>Getting in touch</h2></div>
         <ol class="steps reveal">
           <li><h4>Message us</h4><p>WhatsApp ${esc(D.events.phone)} with what you have in mind.</p></li>
           <li><h4>Tell us the details</h4><p>Date, outlet or delivery address, number of guests or quantities needed.</p></li>
@@ -647,7 +648,7 @@
       </div>
     </section>`;
 
-  /* ---------------- shop (merchandise, not on sale yet) ---------------- */
+  /* ---------------- shop (merch T.B.B sells today) ---------------- */
   pages.shop = () => {
     const S = D.shop;
     const card = (x) => `
@@ -659,7 +660,7 @@
           ? `<button class="btn btn-pill" data-chooser="order">Order now</button>`
           : x.now
             ? `<button class="btn btn-pill" data-chooser="merchnow" data-item="${esc(x.n)}">Ask on WhatsApp</button>`
-            : `<button class="btn btn-pill btn-ghost" data-chooser="merch" data-item="${esc(x.n)}">Register interest</button>`}
+            : ""}
       </article>`;
     return `
     <section class="banner img-banner shop-banner">
@@ -676,7 +677,7 @@
     ${S.collections.map(([id, name, blurb], i) => `
     <section class="section tight shop-col${i % 2 ? " alt" : ""}" id="${id}">
       <div class="wrap">
-        <div class="section-head reveal"><div>${id === "now" ? "" : `<p class="eyebrow">Coming soon</p>`}<h2 class="display-xl">${esc(name)}</h2><p class="col-blurb">${esc(blurb)}</p></div></div>
+        <div class="section-head reveal"><div><h2 class="display-xl">${esc(name)}</h2><p class="col-blurb">${esc(blurb)}</p></div></div>
         <div class="product-grid">${S.items.filter((x) => x.c === id).map(card).join("")}</div>
       </div>
     </section>`).join("")}`;
@@ -685,7 +686,7 @@
   pages.notfound = () => `<section class="banner"><div class="wrap"><h1>Page not found</h1><p><a class="link-arrow" href="#home">Back to home</a></p></div></section>`;
 
   /* ------------------------------------------------------------------ footer */
-  const TICKER = ["Dine in", "Takeaway", hasGrab ? "Delivery via Beep & GrabFood" : "Delivery via Beep","Pre-orders", "Whole cakes", "Events", "Wholesale", "Open daily 8am – 10pm"];
+  const TICKER = ["Dine in", "Takeaway", hasGrab ? "Delivery via Beep & GrabFood" : "Delivery via Beep","Pre-orders", "Whole cakes", "Events", "Wholesale", "Open daily 8am to 10pm"];
   const tickerRun = TICKER.map((t) => `<span>${esc(t)}</span>`).join("");
   $("#footer").innerHTML = `
     <div class="ticker" aria-label="${esc(TICKER.join(", "))}"><div class="ticker-track" aria-hidden="true">${tickerRun}${tickerRun}</div></div>
@@ -724,42 +725,16 @@
   };
   const anchorFor = (r) => (["bakery", "events", "shop"].includes(r.name) && r.params[0]) ? r.params[0] : null;
 
-  // Home hero slider: crossfade every 6 s, arrows and dots; paused for reduced motion.
-  let slideTimer;
-  const initSlider = () => {
-    const box = $("[data-slider]");
-    if (!box) return;
-    const slides = $$(".slide", box), dots = $$("[data-dot]", box);
-    let at = 0;
-    const show = (n) => {
-      at = (n + slides.length) % slides.length;
-      slides.forEach((s, i) => { s.classList.toggle("on", i === at); s.setAttribute("aria-hidden", i !== at); });
-      dots.forEach((d, i) => d.classList.toggle("on", i === at));
-    };
-    const restart = () => {
-      clearInterval(slideTimer);
-      if (!matchMedia("(prefers-reduced-motion: reduce)").matches) slideTimer = setInterval(() => show(at + 1), 6000);
-    };
-    box.addEventListener("click", (e) => {
-      const a = e.target.closest("[data-slide]"), d = e.target.closest("[data-dot]");
-      if (a) { show(at + Number(a.dataset.slide)); restart(); }
-      if (d) { show(Number(d.dataset.dot)); restart(); }
-    });
-    restart();
-  };
-
   const render = () => {
     const r = parse();
     const fn = pages[r.name] || pages.notfound;
     app.innerHTML = fn(r.params);
     $$(".nav-link[data-route]").forEach((a) => a.classList.toggle("active", a.dataset.route === r.name));
-    document.title = r.name === "home" ? "The Bread Bar" : `${({ menu: "Menu", bakery: "Bakery", locations: "Locations", about: "Our Story", events: "Events & Wholesale", shop: "Shop" })[r.name] || "Not found"} — The Bread Bar`;
-    clearInterval(slideTimer);
+    document.title = r.name === "home" ? "The Bread Bar" : `${({ menu: "Menu", bakery: "Bakery", locations: "Locations", about: "Our Story", events: "Events & Wholesale", shop: "Shop" })[r.name] || "Not found"} · The Bread Bar`;
     if (r.name === "menu") initMenu();
-    if (r.name === "home") initSlider();
     // Clips inserted via innerHTML: force muted so autoplay is allowed; still posters only for reduced motion.
     $$("video.bgvid", app).forEach((v) => { v.muted = true; v.removeAttribute("autoplay"); });
-    setTimeout(() => { syncStory(); syncVideos(); }, 150); // after the scroll position below is settled
+    setTimeout(() => { syncScenes(); syncVideos(); }, 150); // after the scroll position below is settled
     // Photo tiles that open the lightbox are plain figures/images: make them keyboard-reachable too.
     $$("[data-lb]:not(a):not(button)", app).forEach((el) => {
       el.tabIndex = 0; el.setAttribute("role", "button");
@@ -814,29 +789,72 @@
   }
   const queueVideos = () => { if (!vidTick) vidTick = setTimeout(syncVideos, 120); };
 
-  // "From flour to counter": on wide screens the section pins and the three tiles rise in one after another as you
-  // scroll (progress written to CSS vars). Phones and reduced motion keep the plain grid.
-  const wideMotion = matchMedia("(min-width: 900px) and (prefers-reduced-motion: no-preference)");
-  function syncStory() {
-    const sec = $("[data-scrolly]");
-    if (!sec) return;
-    const on = wideMotion.matches;
-    sec.classList.toggle("scrolly-on", on);
-    if (!on) return;
+  // Two pinned scenes on the home page, both driven by scroll (scroll-craft pass, 24 Oct 2026):
+  //  - the hero: separate planes (flour plate, headline, loaf cut-out, flour dust, pastry stack) moving at different
+  //    rates; the loaf and the plate scale around the same contact point so the loaf stays on its flour.
+  //  - "From flour to counter" (the peak): flour clip, dough clip, then the loaf proves, bakes (pale dough browns into
+  //    crust) and lands on the counter clip, with the step list following.
+  // Reduced motion: no pinning, the static composition (and the finished loaf) only.
+  const motionOK = matchMedia("(prefers-reduced-motion: no-preference)");
+  const clamp01 = (v) => Math.min(1, Math.max(0, v));
+  const ramp = (a, b, p) => clamp01((p - a) / (b - a));
+  const PIN_TOP = 62; // height of the scrolled (compact) sticky header
+  const progress = (sec, pin) => {
     const r = sec.getBoundingClientRect();
-    const run = Math.max(1, r.height - innerHeight);
-    const p = Math.min(1, Math.max(0, -r.top / run));
-    sec.style.setProperty("--p", p.toFixed(3));
-    $$(".story", sec).forEach((el, i) => {
-      const k = Math.min(1, Math.max(0, 0.3 + p * 2.4 - i * 0.75)); // first tile already part-way in when the pin starts
-      el.style.setProperty("--k", k.toFixed(3));
-    });
+    return clamp01((PIN_TOP - r.top) / Math.max(1, r.height - pin.offsetHeight));
+  };
+  const put = (el, tf, op) => { if (!el) return; el.style.transform = tf; if (op != null) el.style.opacity = op.toFixed(3); };
+  const BAKE_CAPS = ["Flour", "Dough", "Prove", "Oven", "Counter"];
+  function syncScenes() {
+    const live = motionOK.matches;
+    const hero = $("[data-hero]");
+    if (hero) {
+      hero.classList.toggle("live", live);
+      const pin = $(".hs-pin", hero);
+      if (live) {
+        const p = progress(hero, pin), H = pin.offsetHeight;
+        put($(".hs-plate", hero), `translate3d(0,${(-p * 0.05 * H).toFixed(1)}px,0) scale(${(1.04 + 0.1 * p).toFixed(4)})`);
+        put($(".hs-loaf", hero), `translate3d(-50%,${(-p * 0.05 * H).toFixed(1)}px,0) scale(${(1 + 0.32 * p).toFixed(4)})`);
+        put($(".hs-title", hero), `translate3d(0,${(-p * 0.03 * H).toFixed(1)}px,0) scale(${(1 - 0.06 * p).toFixed(4)})`, 1 - ramp(0.3, 0.55, p));
+        const b = ramp(0.55, 0.78, p);
+        put($(".hs-beat", hero), `translate3d(0,${((1 - b) * 18).toFixed(1)}px,0)`, b);
+        put($(".hs-front", hero), `translate3d(0,${(-p * 0.62 * H).toFixed(1)}px,0) rotate(${(-8 * p).toFixed(2)}deg)`);
+        put($(".hs-dust", hero), `translate3d(0,${(-p * 0.34 * H).toFixed(1)}px,0)`);
+        hero.dataset.p = p.toFixed(2);
+      } else $$(".hs-pin > *", hero).forEach((el) => { el.style.transform = ""; el.style.opacity = ""; });
+    }
+    const bake = $("[data-bake]");
+    if (bake) {
+      bake.classList.toggle("live", live);
+      const pin = $(".bake-pin", bake);
+      const steps = $$(".bake-steps li", bake);
+      if (!live) {
+        $$(".bk, .bk-raw, .bk-baked", bake).forEach((el) => { el.style.transform = ""; el.style.opacity = ""; });
+        steps.forEach((li) => li.classList.remove("on", "done"));
+        return;
+      }
+      const p = progress(bake, pin);
+      const at = Math.min(4, Math.floor(p / 0.2));
+      put($(".bk-flour", bake), "none", 1 - ramp(0.17, 0.25, p));
+      put($(".bk-dough", bake), "none", ramp(0.15, 0.23, p) * (1 - ramp(0.38, 0.46, p)));
+      const prove = ramp(0.42, 0.6, p), baked = ramp(0.6, 0.76, p);
+      const sx = 0.8 + 0.12 * prove + 0.08 * baked, sy = 0.58 + 0.32 * prove + 0.1 * baked;
+      put($(".bk-loaf", bake), `translate3d(-50%,0,0) scale(${sx.toFixed(4)},${sy.toFixed(4)})`, ramp(0.38, 0.46, p) * (1 - ramp(0.84, 0.92, p)));
+      put($(".bk-baked", bake), "none", baked);
+      put($(".bk-glow", bake), `scale(${(0.7 + 0.4 * ramp(0.56, 0.74, p)).toFixed(3)})`, ramp(0.56, 0.68, p) * (1 - ramp(0.8, 0.9, p)));
+      put($(".bk-counter", bake), "none", ramp(0.82, 0.9, p));
+      $(".story-progress span", bake).style.transform = `scaleX(${p.toFixed(3)})`;
+      steps.forEach((li, i) => { li.classList.toggle("on", i === at); li.classList.toggle("done", i < at); });
+      const cap = $(".bk-cap", bake);
+      if (cap.textContent !== BAKE_CAPS[at]) cap.textContent = BAKE_CAPS[at];
+      bake.dataset.p = p.toFixed(2);
+    }
   }
   addEventListener("resize", queueVideos);
   const header = $("#header");
-  const onScroll = () => { header.classList.toggle("scrolled", scrollY > 10); checkReveals(); queueVideos(); syncStory(); };
-  addEventListener("resize", syncStory);
-  wideMotion.addEventListener && wideMotion.addEventListener("change", syncStory);
+  const onScroll = () => { header.classList.toggle("scrolled", scrollY > 10); checkReveals(); queueVideos(); syncScenes(); };
+  addEventListener("resize", syncScenes);
+  motionOK.addEventListener && motionOK.addEventListener("change", syncScenes);
   addEventListener("resize", checkReveals);
   addEventListener("scroll", onScroll, { passive: true });
 
@@ -873,10 +891,9 @@
   const CHOICES = {
     order: { eyebrow: "Delivery & pre-orders", title: "Order from which outlet?", go: "Order on Beep", url: (o) => o.order,
       note: hasGrab ? "Order for delivery or pick-up on Beep or GrabFood." : "Delivery and pick-up are handled by our ordering partner, Beep." },
-    reserve: { eyebrow: "Reservations & enquiries", title: "Reserve at which outlet?", go: "WhatsApp to reserve", url: (o) => o.whatsapp, note: "Reservations are taken over WhatsApp — our team will confirm your booking." },
+    reserve: { eyebrow: "Reservations & enquiries", title: "Reserve at which outlet?", go: "WhatsApp to reserve", url: (o) => o.whatsapp, note: "Reservations are taken over WhatsApp; our team will confirm your booking." },
     preorder: { eyebrow: "Whole cakes & large orders", title: "Pre-order from which outlet?", go: "Message on WhatsApp", url: (o) => o.whatsapp, note: "Whole cakes need to be pre-ordered. Let us know the cake, date and pick-up time." },
     merchnow: { eyebrow: "T.B.B shop", title: "Ask at which outlet?", go: "Message on WhatsApp", url: (o) => o.whatsapp, note: "Message the outlet to check sizes, colours and what’s in stock today." },
-    merch: { eyebrow: "T.B.B shop", title: "Register interest at which outlet?", go: "Message on WhatsApp", url: (o) => o.whatsapp, note: "This item isn’t on sale yet. Send us a message and we’ll let you know when it arrives." },
   };
   const openChooser = (kind, item) => {
     const c = CHOICES[kind];

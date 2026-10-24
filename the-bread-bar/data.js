@@ -38,8 +38,8 @@ window.TBB = {
     },
   },
   tagline: "Raw. Earthy. Progressive.",
-  hours: "Open daily, 8am – 10pm",
-  brunchHours: "Brunch served 8am – 5pm",
+  hours: "Open daily, 8am to 10pm",
+  brunchHours: "Brunch served 8am to 5pm",
   events: { phone: "017-637 5626", whatsapp: "https://wa.me/60176375626" },
   instagram: "https://www.instagram.com/thebreadbarmy/",
   linktree: "https://linktr.ee/thebreadbarmy",
@@ -52,7 +52,7 @@ window.TBB = {
       sections: [
         { title: "Small Plates", note: "available all day", items: [
           { n: "Assorted Slices of Sourdough Bread", d: "toasted & served with salted butter", p: 17, img: "sourdough-slices",
-            extras: [["alternate butter — truffle / kombu", "+ 6.5"], ["add-on butter — truffle / kombu", "+ 8.0"]] },
+            extras: [["alternate butter: truffle / kombu", "+ 6.5"], ["add-on butter: truffle / kombu", "+ 8.0"]] },
           { n: "Prawn Toast", d: "deep-fried sourdough, tiger prawn mix, crispy millet grains, coriander yoghurt", p: 26, img: "prawn-toast", vid: "prawn-toast" },
           { n: "Truffle Fries", d: "with grana padano, sriracha mayo", p: 24, img: "truffle-fries" },
           { n: "Spiced Cauliflower Tempura", d: "with sriracha mayo", p: 24 },
@@ -145,7 +145,7 @@ window.TBB = {
           { n: "Tiramisu Latte", p: [null, 18.5], img: "tiramisu-latte" },
           { n: "Black Sunrise", p: [null, 16.5], img: "black-sunrise" },
           { n: "Filter Coffee", d: "enquire about our seasonal bean selection", p: [23, null], img: "filter-coffee", only: "ttdi" },
-        ], extras: [["alt milk — oat / seasonal flavour", "+ 2.0"], ["add-on syrup — hazelnut / vanilla", "+ 2.0"]] },
+        ], extras: [["alt milk: oat / seasonal flavour", "+ 2.0"], ["add-on syrup: hazelnut / vanilla", "+ 2.0"]] },
         { title: "Signature Coffee", items: [
           { n: "Salted Caramel Macchiato", d: "homemade salted caramel sauce, Maldon sea salt", p: [16, 17], img: "salted-caramel-macchiato" },
           { n: "Biscoff Hazelnut Macchiato", d: "infused Biscoff milk, hazelnut, espresso", p: [17.5, 18.5], img: "biscoff-hazelnut-macchiato" },
@@ -174,7 +174,7 @@ window.TBB = {
           { n: "Yuzu Osmanthus Chamomile", d: "korean yuzu, osmanthus cold brew", p: [null, 16.5] },
           { n: "Coconut Melon Oolong", d: "with lemon cream", p: [null, 18] },
           { n: "Mango Oolong Sparkling", d: "with lemon cream", p: [null, 18] },
-          { n: "Butter Beer", d: "100% non-alcoholic — vanilla soda, homemade butter caramel, light cream", p: [null, 17], img: "butterbeer" },
+          { n: "Butter Beer", d: "100% non-alcoholic: vanilla soda, homemade butter caramel, light cream", p: [null, 17], img: "butterbeer" },
         ]},
         { title: "Lemonade", items: [
           { n: "Green Apple Assamboi", p: [null, 16.5], img: "green-apple-assamboi" },
@@ -252,14 +252,14 @@ window.TBB = {
     "Flourless Chocolate Cake",
   ],
   loaves: [
-    { n: "Country Brown Sourdough", p: 16, img: "bread-country-brown", g: 400, flour: "Stone milled — Japanese strong flour", crust: "Medium hard", tang: "Medium", crumb: "Medium soft", inc: "—", hyd: 90 },
-    { n: "Brown Butter Oat Sourdough", p: 25, img: "bread-brown-butter-oat", g: 650, flour: "Stone milled strong — wholemeal flour, French T65", crust: "Medium soft", tang: "Medium", crumb: "Soft", inc: "Brown butter, rolled oats", hyd: 75 },
-    { n: "Ancient Grain Sourdough", p: 25, img: "bread-ancient-grain", g: 650, flour: "Stone milled — wholemeal flour, French T65, Japanese bread flour", crust: "Medium soft", tang: "Medium", crumb: "Soft", inc: "Cornmeal, flax seed, pumpkin seed, amaranth", hyd: 70 },
-    { n: "Wholemeal Rye Sourdough", p: 20, img: "bread-wholemeal-rye", g: 600, flour: "Stone milled — wholemeal flour, dark German rye 15%", crust: "Medium hard", tang: "Medium", crumb: "Medium", inc: "—", hyd: 72 },
+    { n: "Country Brown Sourdough", p: 16, img: "bread-country-brown", g: 400, flour: "Stone milled: Japanese strong flour", crust: "Medium hard", tang: "Medium", crumb: "Medium soft", inc: "None", hyd: 90 },
+    { n: "Brown Butter Oat Sourdough", p: 25, img: "bread-brown-butter-oat", g: 650, flour: "Stone milled strong: wholemeal flour, French T65", crust: "Medium soft", tang: "Medium", crumb: "Soft", inc: "Brown butter, rolled oats", hyd: 75 },
+    { n: "Ancient Grain Sourdough", p: 25, img: "bread-ancient-grain", g: 650, flour: "Stone milled: wholemeal flour, French T65, Japanese bread flour", crust: "Medium soft", tang: "Medium", crumb: "Soft", inc: "Cornmeal, flax seed, pumpkin seed, amaranth", hyd: 70 },
+    { n: "Wholemeal Rye Sourdough", p: 20, img: "bread-wholemeal-rye", g: 600, flour: "Stone milled: wholemeal flour, dark German rye 15%", crust: "Medium hard", tang: "Medium", crumb: "Medium", inc: "None", hyd: 72 },
     { n: "Toasted Millet Sourdough", p: 24, img: "bread-toasted-millet", g: 600, flour: "Wholemeal flour, Japanese strong flour, French T65", crust: "Medium soft", tang: "Medium light", crumb: "Soft", inc: "Toasted millet grains", hyd: 75 },
-    { n: "Sourdough Focaccia with Mixed Olives & Sun-dried Tomatoes", p: 26, img: "bread-focaccia-olives", g: 600, flour: "Stone milled — strong wholemeal flour, French T65", crust: "Medium soft", tang: "Medium", crumb: "Soft", inc: "Mixed olives, sun-dried tomatoes, fresh herbs", hyd: 90 },
-    { n: "Sourdough Focaccia with Cheddar Cheese & Sun-dried Tomatoes", p: 27, img: "bread-focaccia-cheddar", g: 600, flour: "Stone milled — strong wholemeal flour, French T65", crust: "Medium soft", tang: "Medium", crumb: "Soft", inc: "Cheddar cheese, sun-dried tomatoes, fresh herbs", hyd: 90 },
-    { n: "Brioche Loaf", p: 26, img: "bread-brioche", g: 600, flour: "Stone milled — Japanese bread flour", crust: "Soft", tang: "None", crumb: "Soft", inc: "Milk, eggs, butter, sugar", hyd: 60, notes: "Rich, buttery, fragrant · leavened with dry yeast" },
+    { n: "Sourdough Focaccia with Mixed Olives & Sun-dried Tomatoes", p: 26, img: "bread-focaccia-olives", g: 600, flour: "Stone milled: strong wholemeal flour, French T65", crust: "Medium soft", tang: "Medium", crumb: "Soft", inc: "Mixed olives, sun-dried tomatoes, fresh herbs", hyd: 90 },
+    { n: "Sourdough Focaccia with Cheddar Cheese & Sun-dried Tomatoes", p: 27, img: "bread-focaccia-cheddar", g: 600, flour: "Stone milled: strong wholemeal flour, French T65", crust: "Medium soft", tang: "Medium", crumb: "Soft", inc: "Cheddar cheese, sun-dried tomatoes, fresh herbs", hyd: 90 },
+    { n: "Brioche Loaf", p: 26, img: "bread-brioche", g: 600, flour: "Stone milled: Japanese bread flour", crust: "Soft", tang: "None", crumb: "Soft", inc: "Milk, eggs, butter, sugar", hyd: 60, notes: "Rich, buttery, fragrant · leavened with dry yeast" },
   ],
   // Shop: only what T.B.B sells today (photos from the user's product Drive, 18 Oct 2026; no prices given, so
   // "Ask about it" opens the outlet WhatsApp). The deck's "coming soon" ideas were removed at the user's request.
@@ -282,6 +282,6 @@ window.TBB = {
     origins: ["Brazil Santa Lucia", "Nicaragua Los Cipreses", "Ethiopia Yirgacheffe"],
     notes: ["Mixed nuts", "Butterscotch", "Caramel"],
     sizes: [["250g", 40], ["500g", 75], ["1kg", 140]],
-    blurb: "Espresso-based and best with milk — but just as good black. Experience our signature blend at home.",
+    blurb: "Espresso-based and best with milk, but just as good black. Experience our signature blend at home.",
   },
 };
