@@ -814,7 +814,9 @@
       if (live) {
         const p = progress(hero, pin), H = pin.offsetHeight;
         put($(".hs-plate", hero), `translate3d(0,${(-p * 0.05 * H).toFixed(1)}px,0) scale(${(1.04 + 0.1 * p).toFixed(4)})`);
-        put($(".hs-loaf", hero), `translate3d(-50%,${(-p * 0.05 * H).toFixed(1)}px,0) scale(${(1 + 0.32 * p).toFixed(4)})`);
+        // the loaf only grows once the headline has faded, so it never climbs into the wording
+        const g = ramp(0.45, 1, p);
+        put($(".hs-loaf", hero), `translate3d(-50%,${(-g * 0.05 * H).toFixed(1)}px,0) scale(${(1 + 0.32 * g).toFixed(4)})`);
         put($(".hs-title", hero), `translate3d(0,${(-p * 0.03 * H).toFixed(1)}px,0) scale(${(1 - 0.06 * p).toFixed(4)})`, 1 - ramp(0.3, 0.55, p));
         const b = ramp(0.55, 0.78, p);
         put($(".hs-beat", hero), `translate3d(0,${((1 - b) * 18).toFixed(1)}px,0)`, b);

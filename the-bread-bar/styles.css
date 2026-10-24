@@ -756,20 +756,22 @@ a, button, [role="button"] { touch-action: manipulation; }
 .hs-plate img { width: 100%; height: 100%; object-fit: cover; }
 .hs-pin::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 34%; z-index: 1; pointer-events: none;
   background: linear-gradient(rgba(247,241,231,0), rgba(247,241,231,.9) 55%, var(--paper)); }
-.hs-title { position: absolute; z-index: 1; top: 8%; left: var(--gutter); right: var(--gutter); text-align: center; color: var(--cream);
-  font-size: clamp(42px, 9.2vw, 150px); letter-spacing: .02em; line-height: .96; transform-origin: 50% 0; }
-.hs-loaf { position: absolute; z-index: 2; left: 50%; bottom: calc(100% - var(--base) - 5.5%); width: clamp(260px, 36vw, 580px);
+/* wording sits in front of the loaf (z 3) so nothing ever covers it; sizes also follow the screen height so short
+   laptop screens (1280x720, 1366x768) keep a clear gap between the headline and the loaf */
+.hs-title { position: absolute; z-index: 3; top: 8%; left: var(--gutter); right: var(--gutter); text-align: center; color: var(--cream);
+  font-size: clamp(42px, min(9.2vw, 15vh), 150px); letter-spacing: .02em; line-height: .96; transform-origin: 50% 0; }
+.hs-loaf { position: absolute; z-index: 2; left: 50%; bottom: calc(100% - var(--base) - 5.5%); width: clamp(240px, min(36vw, 56vh), 580px);
   transform: translate3d(-50%, 0, 0); transform-origin: 50% 96%; }
 .hs-loaf img { position: relative; width: 100%; height: auto; filter: drop-shadow(0 16px 14px rgba(24,16,10,.5)); }
 .hs-loaf::before { content: ""; position: absolute; left: 6%; right: 6%; bottom: -5%; height: 22%; border-radius: 50%; background: radial-gradient(closest-side, rgba(40,30,22,.55), rgba(40,30,22,0)); }
-.hs-dust { position: absolute; z-index: 3; left: 0; top: 0; width: 100%; height: 120%; pointer-events: none;
+.hs-dust { position: absolute; z-index: 4; left: 0; top: 0; width: 100%; height: 120%; pointer-events: none;
   -webkit-mask-image: linear-gradient(#000 0, #000 38%, transparent 62%); mask-image: linear-gradient(#000 0, #000 38%, transparent 62%); }
-.hs-front { position: absolute; z-index: 4; right: max(-2vw, -30px); bottom: -16%; width: clamp(150px, 19vw, 300px); height: auto;
+.hs-front { position: absolute; z-index: 5; right: max(-2vw, -30px); bottom: -16%; width: clamp(150px, 19vw, 300px); height: auto;
   filter: blur(1.4px) drop-shadow(0 30px 30px rgba(24,16,10,.45)); transform-origin: 50% 100%; }
-.hs-beat { position: absolute; z-index: 1; top: 4.5%; left: var(--gutter); right: var(--gutter); margin: 0; text-align: center; color: var(--cream);
+.hs-beat { position: absolute; z-index: 3; top: 4.5%; left: var(--gutter); right: var(--gutter); margin: 0; text-align: center; color: var(--cream);
   font: italic 400 clamp(22px, 2.8vw, 40px)/1.25 var(--serif); text-wrap: balance; display: none; }
 .hs.live .hs-beat { display: block; opacity: 0; }
-.hs-copy { position: absolute; z-index: 5; left: var(--gutter); bottom: clamp(30px, 6vh, 64px); max-width: 430px; color: var(--ink); }
+.hs-copy { position: absolute; z-index: 6; left: var(--gutter); bottom: clamp(30px, 6vh, 64px); max-width: 430px; color: var(--ink); }
 .hs-lede { font-size: clamp(16px, 1.3vw, 18px); line-height: 1.55; margin: 0 0 18px; text-wrap: pretty; }
 .hs .cta-row { gap: 10px; }
 @media (max-width: 760px) {
