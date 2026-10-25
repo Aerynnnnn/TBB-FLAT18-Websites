@@ -77,7 +77,7 @@
       <p>All-day brunch, sourdough sandwiches and pasta in Mutiara Damansara. Dinner specials from 5pm.</p>
       <div class="hero-cta">
         <a class="btn btn-butter" href="#menu">See the full menu</a>
-        <a class="btn btn-ghost-light" href="${L.reserve.wa}" target="_blank" rel="noopener">Book a table</a>
+        <a class="btn btn-ghost-light" href="${evWa('a table')}" target="_blank" rel="noopener">Book a table</a>
       </div>
     </div>
     <h1 class="hero-mark">F<i>LA</i>T<sup>18</sup></h1>
@@ -239,7 +239,7 @@
       <dl>
         <div><dt>Address</dt><dd>${F.address.join('<br>')}<small><a href="${F.maps}" target="_blank" rel="noopener">Open in Google Maps →</a></small></dd></div>
         <div><dt>Hours</dt><dd>Open daily, 9am – 10pm</dd></div>
-        <div><dt>Reservations &amp; private room</dt><dd><a href="${L.reserve.wa}" target="_blank" rel="noopener">${L.reserve.phone}</a><small>WhatsApp</small></dd></div>
+        <div><dt>Reservations &amp; private room</dt><dd><a href="${evWa('a table')}" target="_blank" rel="noopener">${L.reserve.phone}</a><small>WhatsApp</small></dd></div>
         <div><dt>Delivery, pre-orders &amp; pickup</dt><dd><a href="${L.order}" data-link="order" target="_blank" rel="noopener">${L.grab ? 'Order on GrabFood or Beep' : 'Order on Beep'}</a></dd></div>
       </dl>
     </div>
@@ -591,14 +591,14 @@
     <div class="foot-top">
       <div><a href="#home" class="mark" aria-label="FLAT18 home">F<i>LA</i>T<sup>18</sup></a><p style="margin-top:14px;opacity:.85">A hug for your tastebuds.<br>Bringing classics back.</p></div>
       <div><h4>Visit</h4><ul>${F.address.map(a => `<li>${a}</li>`).join('')}<li><a href="${F.maps}" target="_blank" rel="noopener">Google Maps →</a></li></ul></div>
-      <div><h4>Contact</h4><ul><li><a href="#events">Events &amp; packages</a></li><li><a href="${L.reserve.wa}" target="_blank" rel="noopener">Reservations ${L.reserve.phone}</a></li><li><a href="${L.catering.wa}" target="_blank" rel="noopener">Catering ${L.catering.phone}</a></li><li><a href="${L.order}" data-link="order" target="_blank" rel="noopener">${L.grab ? 'Delivery on GrabFood or Beep' : 'Delivery on Beep'}</a></li></ul></div>
+      <div><h4>Contact</h4><ul><li><a href="#events">Events &amp; packages</a></li><li><a href="${evWa('a table')}" target="_blank" rel="noopener">Reservations ${L.reserve.phone}</a></li><li><a href="${L.catering.wa}" target="_blank" rel="noopener">Catering ${L.catering.phone}</a></li><li><a href="${L.order}" data-link="order" target="_blank" rel="noopener">${L.grab ? 'Delivery on GrabFood or Beep' : 'Delivery on Beep'}</a></li></ul></div>
       <div><h4>Follow</h4><ul><li><a href="${L.instagram}" target="_blank" rel="noopener">Instagram @flat18my</a></li><li><a href="${L.tiktok}" target="_blank" rel="noopener">TikTok @flat18my</a></li><li><a href="${L.breadbar}" target="_blank" rel="noopener">The Bread Bar</a></li></ul></div>
     </div>
     <div class="foot-bot"><span>© FLAT18 Sdn Bhd (1511667-P) · Open daily 9am – 10pm</span><span>Sister restaurant of The Bread Bar, TTDI &amp; Publika</span></div>
   </div>`;
 
   /* ---------- links, drawer, lightbox ---------- */
-  $$('[data-link]').forEach(a => { a.href = a.dataset.link === 'order' ? L.order : L.reserve.wa; });
+  $$('[data-link]').forEach(a => { a.href = a.dataset.link === 'order' ? L.order : evWa('a table'); }); // Book a table = reservations WhatsApp + preloaded prompt
 
   /* delivery chooser: every [data-link="order"] is a real Beep link; once links.grab is set it opens the
      chooser instead (GrabFood first). Native <dialog>: focus stays inside, Esc closes, focus goes back. */

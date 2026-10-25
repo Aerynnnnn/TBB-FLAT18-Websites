@@ -6,6 +6,8 @@
   const app = $("#app");
   if ("scrollRestoration" in history) history.scrollRestoration = "manual"; // the router sets scroll itself
   const photo = (slug) => `assets/photos/${slug}.jpg`;
+  // Reserve / book a table: the outlet's WhatsApp with the preloaded enquiry prompt (D.events.waPrompt, user's text)
+  const resWa = (o) => (D.events.waPrompt ? `${o.whatsapp}?text=${encodeURIComponent(D.events.waPrompt)}` : o.whatsapp);
   const money = (n) => (n == null ? "" : Number(n).toFixed(1));
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const OUT = D.outlets;
@@ -30,7 +32,7 @@
     return `
     <article class="loc-block loc-${key} reveal">
       <div class="loc-corners">
-        <a href="${o.whatsapp}" target="_blank" rel="noopener">Reserve a table</a>
+        <a href="${resWa(o)}" target="_blank" rel="noopener">Reserve a table</a>
         <a href="${o.maps}" target="_blank" rel="noopener">Directions</a>
       </div>
       <h3 class="loc-name">${esc(o.name)}</h3>
@@ -570,12 +572,12 @@
             <div><dt>Hours</dt><dd>${esc(D.hours)}<br><span style="color:var(--muted)">${esc(D.brunchHours)}</span></dd></div>
             <div><dt>Address</dt><dd>${addr(o)}<br><a href="${o.maps}" target="_blank" rel="noopener">Open in Google Maps</a></dd></div>
             <div><dt>Phone</dt><dd><a href="tel:${o.tel}">${esc(o.phone)}</a></dd></div>
-            <div><dt>Reservations</dt><dd>Reservations &amp; enquiries by <a href="${o.whatsapp}" target="_blank" rel="noopener">WhatsApp</a></dd></div>
+            <div><dt>Reservations</dt><dd>Reservations &amp; enquiries by <a href="${resWa(o)}" target="_blank" rel="noopener">WhatsApp</a></dd></div>
             <div><dt>Delivery</dt><dd>Delivery &amp; pre-orders via ${deliveryLinks(o)}</dd></div>
             <div><dt>Menu</dt><dd><a href="#menu" data-set-outlet="${key}">View the ${esc(o.name)} menu</a></dd></div>
           </dl>
           <div class="cta-row" style="margin-top:28px">
-            <a class="btn" href="${o.whatsapp}" target="_blank" rel="noopener">Reserve on WhatsApp</a>
+            <a class="btn" href="${resWa(o)}" target="_blank" rel="noopener">Reserve on WhatsApp</a>
             <a class="btn btn-ghost" href="${o.order}" target="_blank" rel="noopener">Order on Beep</a>
             ${o.grab ? `<a class="btn btn-ghost" href="${o.grab}" target="_blank" rel="noopener">Order on GrabFood</a>` : ""}
           </div>
@@ -970,7 +972,7 @@
   const CHOICES = {
     order: { eyebrow: "Delivery & pre-orders", title: "Order from which outlet?", go: "Order on Beep", url: (o) => o.order,
       note: hasGrab ? "Order for delivery or pick-up on Beep or GrabFood." : "Delivery and pick-up are handled by our ordering partner, Beep." },
-    reserve: { eyebrow: "Reservations & enquiries", title: "Reserve at which outlet?", go: "WhatsApp to reserve", url: (o) => o.whatsapp, note: "Reservations are taken over WhatsApp; our team will confirm your booking." },
+    reserve: { eyebrow: "Reservations & enquiries", title: "Reserve at which outlet?", go: "WhatsApp to reserve", url: (o) => resWa(o), note: "Reservations are taken over WhatsApp; our team will confirm your booking." },
     preorder: { eyebrow: "Whole cakes & large orders", title: "Pre-order from which outlet?", go: "Message on WhatsApp", url: (o) => o.whatsapp, note: "Whole cakes need to be pre-ordered. Let us know the cake, date and pick-up time." },
     merchnow: { eyebrow: "T.B.B shop", title: "Ask at which outlet?", go: "Message on WhatsApp", url: (o) => o.whatsapp, note: "Message the outlet to check sizes, colours and what’s in stock today." },
   };
