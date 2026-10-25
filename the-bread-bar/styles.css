@@ -16,7 +16,6 @@
   --rust: #b5481f;
   --plum: #5e3550; /* Publika's block colour (was forest green until 25 Oct 2026; green is FLAT18's brand) */
   --blush: #f1d6c4;
-  --sage: #b9bda7;
   --gold: #e3b98f;
   --line: rgba(34, 28, 23, .14);
   --serif: "Sorts Mill Goudy", Georgia, "Times New Roman", serif;
@@ -577,7 +576,7 @@ ul.price-list { list-style: none; margin: 0; padding: 0; }
 .block-banner h1 { font: 600 clamp(56px, 10vw, 140px)/.9 var(--condensed); letter-spacing: .01em; }
 .shop-col.alt { background: var(--cream); }
 .col-blurb { margin: 10px 0 0; font: italic 400 18px var(--serif); color: var(--muted); max-width: 50ch; }
-.shop-col:nth-of-type(3n) .product-media { background: #dfe3d2; }
+.shop-col:nth-of-type(3n) .product-media { background: #e2ddd5; } /* pale stone: same softness as the old sage, no green (green = FLAT18) */
 .shop-col:nth-of-type(3n+1) .product-media { background: var(--blush); }
 
 /* service ticker above the footer */

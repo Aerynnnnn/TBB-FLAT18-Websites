@@ -40,7 +40,9 @@ window.TBB = {
   tagline: "Raw. Earthy. Progressive.",
   hours: "Open daily, 8am to 10pm",
   brunchHours: "Brunch served 8am to 5pm",
-  events: { phone: "017-637 5626", whatsapp: "https://wa.me/60176375626" },
+  events: { phone: "017-637 5626", whatsapp: "https://wa.me/60176375626",
+    // preloaded WhatsApp message for event / bookout enquiries (user's text, 25 Oct 2026); wholesale stays a plain link
+    waPrompt: "Hi! Can we get the following details to help us streamline your private event / restaurant bookout inquiry?\n\n\n *Expected Pax* :\n *Event Date* :\n *Event Time* ( _Start Time – End Time_ ) :\n *Estimated Budget Per Pax* :\n\n *Nature of Event :*\n _(e.g. Wedding, Corporate Event, Product Launch, Private Party, Birthday, Workshop, etc.)_\n\n *Event Details \u0026 Flow :*\nPlease briefly describe the event and how you envision the event flowing.*\n _(e.g. guest arrival time, speeches, ceremony/programme, food service timing, activities, etc.)_\n\n *Food Requirements:*\nPlease let us know what type of food you are looking for, any dietary requirements, and any specific dishes or preferences.\n\n *Drink Requirements* :\n _Please let us know your beverage requirements, including coffee, tea and other non-alcoholic beverages._\n\n *Preferred Service Style* :\n _Buffet / Canapés / Sharing Style / Plated Course-by-Course Service_\n\n _You may also select multiple service styles to suit your event flow — for example, canapés during guest arrival followed by a plated dinner._\n\n *Setup / Décor Requirements* :\n _Please let us know if you require any special setup, decorations, additional tables, equipment or changes to the existing restaurant layout._\n\n *Additional Details / Special Requests :*\n _If you have any customisation ideas for your event, do share some examples or references with us so we can see how best to accommodate them._\n\n *Event space reference photos* :\n\nhttps://photos.app.goo.gl/XKsLXgGxtYeR5RRs6" },
   instagram: "https://www.instagram.com/thebreadbarmy/",
   linktree: "https://linktr.ee/thebreadbarmy",
   company: "The Bread Bar Sdn Bhd 202101014085 (1414385-A)",

@@ -661,7 +661,7 @@
         <p class="eyebrow">Events &amp; private dining</p>
         <h2>Celebrate with us</h2>
         <p>Birthdays, baby showers, team brunches or a long table for friends? Tell us your date, outlet and headcount, and our team will get back to you with options.</p>
-        <div class="cta-row"><a class="btn" href="${D.events.whatsapp}" target="_blank" rel="noopener">Enquire on WhatsApp</a><a class="btn btn-ghost" href="tel:+60176375626">${esc(D.events.phone)}</a></div>
+        <div class="cta-row"><a class="btn" href="${D.events.whatsapp}${D.events.waPrompt ? "?text=" + encodeURIComponent(D.events.waPrompt) : ""}" target="_blank" rel="noopener">Enquire on WhatsApp</a><a class="btn btn-ghost" href="tel:+60176375626">${esc(D.events.phone)}</a></div>
       </div>
     </section>
     <section class="split reverse on-dark" id="wholesale">
