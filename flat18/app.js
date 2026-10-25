@@ -1,4 +1,4 @@
-/* FLAT18 — hash router (bare tokens: #menu, #menu-drinks, #cakes …), day/night mode by Malaysia time, menu page. */
+/* FLAT18 — hash router (bare tokens: #menu, #menu-drinks, #events-gallery …), day/night mode by Malaysia time, menu page. */
 (function () {
   const F = window.FLAT;
   const $ = (s, r = document) => r.querySelector(s);
@@ -202,22 +202,6 @@
   </div>
 </section>
 
-<section class="sec cakes" id="cakes">
-  <div class="wrap">
-    <div class="sec-head">
-      <div>${wob('Pre-order only', 'eyebrow')}<h2>Whole cakes for the table</h2></div>
-      <p>Three house cakes, baked whole for birthdays and get-togethers. Message us a few days ahead with the date and we'll confirm.</p>
-    </div>
-    <div class="cake-grid">
-      ${F.cakes.map(c => `<button class="cake" data-lb="${photo(c.img)}" data-cap="${esc(c.n)}"><div class="dish-img"><img src="${photo(c.img)}" alt="" loading="lazy"></div><h3>${esc(c.n)}</h3></button>`).join('')}
-    </div>
-    <div class="cake-note">
-      <a class="btn btn-green" href="${L.reserve.wa}" target="_blank" rel="noopener">Pre-order on WhatsApp</a>
-      <p>Pick up at FLAT18, or add it to your table booking.</p>
-    </div>
-  </div>
-</section>
-
 <section class="sec evt-teaser" id="private">
   <div class="wrap evt-teaser-in">
     <div class="evt-reel" aria-hidden="true">
@@ -256,7 +240,7 @@
         <div><dt>Address</dt><dd>${F.address.join('<br>')}<small><a href="${F.maps}" target="_blank" rel="noopener">Open in Google Maps →</a></small></dd></div>
         <div><dt>Hours</dt><dd>Open daily, 9am – 10pm</dd></div>
         <div><dt>Reservations &amp; private room</dt><dd><a href="${L.reserve.wa}" target="_blank" rel="noopener">${L.reserve.phone}</a><small>WhatsApp</small></dd></div>
-        <div><dt>Delivery, pre-orders &amp; pickup</dt><dd><a href="${L.order}" target="_blank" rel="noopener">Order on Beep</a></dd></div>
+        <div><dt>Delivery, pre-orders &amp; pickup</dt><dd><a href="${L.order}" data-link="order" target="_blank" rel="noopener">${L.grab ? 'Order on GrabFood or Beep' : 'Order on Beep'}</a></dd></div>
       </dl>
     </div>
     <div class="day">
@@ -441,6 +425,14 @@
   const E = F.events;
   const GAL_START = 16;
   const evMedia = id => `assets/events/${id}.${id[0] === 'v' ? 'mp4' : 'jpg'}`;
+  /* events CTAs open WhatsApp with the preloaded prompt from data.js (events.waPrompt / waPromptCatering).
+     {package} in the prompt becomes the package name; empty prompt = plain chat link. */
+  function evWa(pkg, catering) {
+    const line = catering ? L.catering : L.reserve;
+    const t = String((catering ? E.waPromptCatering : E.waPrompt) || '').trim();
+    const msg = t.split('{package}').join(pkg);
+    return msg ? `${line.wa}?text=${encodeURIComponent(msg)}` : line.wa;
+  }
   function courses(list) {
     return list.map(c => `<div class="crs">
       <h4>${esc(c.h)}</h4>
@@ -459,7 +451,7 @@
       <div class="pkg-body">${courses(p.courses)}
         ${p.veg ? `<div class="veg"><h4>Vegetarian option</h4>${p.veg.map(([h, n, d]) => `<p class="crs-i"><em>${h}</em><span>${esc(n)}</span><small>${esc(d)}</small></p>`).join('')}</div>` : ''}
       </div>
-      <a class="btn" href="#events-enquire" data-pick="${esc(p.name)}">Enquire about ${esc(p.name)}</a>
+      <a class="btn" href="${evWa(p.name)}" target="_blank" rel="noopener">Ask about ${esc(p.name)} on WhatsApp</a>
     </article>`;
   }
   function events() {
@@ -472,7 +464,7 @@
       <h1>Events at <span class="wm">F<i>LA</i>T<sup>18</sup></span></h1>
       <p>With The Bread Bar's ovens behind us: buffets, plated dinners, full restaurant bookouts and catering by the piece, for celebrations, corporate events and special occasions.</p>
       <div class="hero-cta" style="margin-top:22px">
-        <a class="btn btn-butter" href="#events-enquire">Start an event enquiry</a>
+        <a class="btn btn-butter" href="${evWa('an event')}" target="_blank" rel="noopener">Plan an event on WhatsApp</a>
         <a class="btn btn-ghost-light" href="#events-gallery">See photos from past events</a>
       </div>
     </div>
@@ -482,7 +474,7 @@
   </div>
 </section>
 <nav class="tabs" aria-label="Event sections"><div class="wrap tabs-in">
-  ${[['packages', 'Packages'], ['buffet', 'Buffets'], ['plated', 'Plated dinners'], ['bookout', 'Bookouts'], ['canapes', 'Canapés & catering'], ['gallery', 'Gallery'], ['enquire', 'Enquire']]
+  ${[['packages', 'Packages'], ['buffet', 'Buffets'], ['plated', 'Plated dinners'], ['bookout', 'Bookouts'], ['canapes', 'Canapés & catering'], ['gallery', 'Gallery'], ['contact', 'WhatsApp us']]
     .map(([id, t]) => `<a href="#events-${id}" data-tab="${id}">${t}</a>`).join('')}
 </div></nav>
 
@@ -527,6 +519,7 @@
       <summary>Canapé &amp; mini pastry add-ons for event menus</summary>
       <div class="addon-grid">${E.addons.map(g => `<div><h4>${esc(g.h)}</h4><ul>${g.items.map(i => `<li>${esc(i)}</li>`).join('')}</ul></div>`).join('')}</div>
     </details>
+    <p class="bk-cta"><a class="btn" href="${evWa('a full restaurant bookout')}" target="_blank" rel="noopener">Ask about a bookout on WhatsApp</a></p>
   </section>
 
   <section class="msec extras cn" id="ev-canapes">
@@ -542,7 +535,7 @@
       </div>
     </div>`).join('')}
     <p class="fineprint" style="color:#3f4a42">${E.canapes.notes.join(' ')}</p>
-    <a class="btn btn-green" href="#events-enquire" data-pick="Canapés & catering">Enquire about canapés &amp; catering</a>
+    <a class="btn btn-green" href="${evWa('Canapés & catering', true)}" target="_blank" rel="noopener">Ask about canapés &amp; catering on WhatsApp</a>
   </section>
 
   <section class="msec" id="ev-gallery">
@@ -560,38 +553,16 @@
     <div class="gal-more"><button class="btn btn-line" id="gal-more">Show all ${E.media.length} photos &amp; clips</button></div>
   </section>
 
-  <section class="msec" id="ev-enquire">
-    <div class="enq">
+  <section class="msec" id="ev-contact">
+    <div class="plan">
       <div>
-        <h2 style="font-size:clamp(40px,5vw,64px);font-weight:300">Tell us the plan</h2>
-        <p style="color:var(--muted);max-width:44ch;margin-top:14px">Fill this in and we'll open WhatsApp with your message ready to send. Events and bookouts go to our reservations line; canapés and catering go to the catering team.</p>
-        <dl class="enq-lines">
-          <div><dt>Private events &amp; reservations</dt><dd>${L.reserve.phone}</dd></div>
-          <div><dt>Catering &amp; corporate events</dt><dd>${L.catering.phone}</dd></div>
-        </dl>
+        <h2>Plan an event on WhatsApp</h2>
+        <p>Send us the date, the guest count and the occasion. Events and bookouts go to our reservations line; canapés and catering go to the catering team. Nothing is booked until we confirm.</p>
       </div>
-      <form class="enq-form" id="enq" novalidate>
-        <label for="enq-pkg">What are you planning?</label>
-        <select id="enq-pkg">
-          ${[...E.buffets, ...E.plated].map(p => `<option>${esc(p.name)}</option>`).join('')}
-          <option>Full restaurant bookout</option>
-          <option>Canapés &amp; catering</option>
-          <option>Not sure yet</option>
-        </select>
-        <div class="enq-row">
-          <div><label for="enq-date">Date</label><input id="enq-date" type="date"></div>
-          <div><label for="enq-guests">Guests</label><input id="enq-guests" name="guests" type="number" min="1" inputmode="numeric" autocomplete="off" placeholder="e.g. 45…"></div>
-        </div>
-        <label for="enq-time">Time of day</label>
-        <select id="enq-time"><option>Lunch</option><option>High tea</option><option>Dinner</option><option>Flexible</option></select>
-        <label for="enq-name">Your name</label>
-        <input id="enq-name" name="name" type="text" autocomplete="name" placeholder="So we know who we're talking to…">
-        <label for="enq-note">Anything else?</label>
-        <textarea id="enq-note" name="notes" rows="3" autocomplete="off" placeholder="The occasion, dietary needs, set-up ideas…"></textarea>
-        <p class="enq-to" id="enq-to" role="status" aria-live="polite"></p>
-        <a class="btn" id="enq-go" href="#" target="_blank" rel="noopener">Send enquiry on WhatsApp</a>
-        <p class="enq-safe">Opens WhatsApp with your message ready to send. Nothing is booked until we confirm.</p>
-      </form>
+      <dl class="plan-lines">
+        <div><dt>Private events &amp; reservations</dt><dd>${L.reserve.phone}</dd><a class="btn" href="${evWa('an event')}" target="_blank" rel="noopener">WhatsApp reservations</a></div>
+        <div><dt>Catering &amp; corporate events</dt><dd>${L.catering.phone}</dd><a class="btn btn-line" href="${evWa('catering', true)}" target="_blank" rel="noopener">WhatsApp catering</a></div>
+      </dl>
     </div>
   </section>
 </div>`;
@@ -609,20 +580,6 @@
       showGal();
     }));
     $('#gal-more').addEventListener('click', () => { expanded = true; showGal(); });
-    const form = $('#enq');
-    const build = () => {
-      const v = id => $('#' + id).value.trim();
-      const pkg = v('enq-pkg'), catering = pkg.startsWith('Canap');
-      const line = catering ? L.catering : L.reserve;
-      let date = v('enq-date');
-      if (date) date = new Date(date + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
-      const msg = [`Hi FLAT18! I'd like to enquire about an event.`, `Package: ${pkg}`, date && `Date: ${date}`, v('enq-guests') && `Guests: ${v('enq-guests')}`, `Time: ${v('enq-time')}`, v('enq-name') && `Name: ${v('enq-name')}`, v('enq-note') && `Notes: ${v('enq-note')}`].filter(Boolean).join('\n');
-      $('#enq-go').href = `${line.wa}?text=${encodeURIComponent(msg)}`;
-      $('#enq-to').textContent = `Goes to ${catering ? 'the catering team' : 'reservations'}, ${line.phone}`;
-    };
-    form.addEventListener('input', build); form.addEventListener('submit', e => e.preventDefault());
-    build();
-    $$('[data-pick]').forEach(a => a.addEventListener('click', () => { const s = $('#enq-pkg'); s.value = a.dataset.pick; build(); }));
   }
   /* videos: decorative loops, so stop them for reduced motion */
   function quietVideos() {
@@ -634,7 +591,7 @@
     <div class="foot-top">
       <div><a href="#home" class="mark" aria-label="FLAT18 home">F<i>LA</i>T<sup>18</sup></a><p style="margin-top:14px;opacity:.85">A hug for your tastebuds.<br>Bringing classics back.</p></div>
       <div><h4>Visit</h4><ul>${F.address.map(a => `<li>${a}</li>`).join('')}<li><a href="${F.maps}" target="_blank" rel="noopener">Google Maps →</a></li></ul></div>
-      <div><h4>Contact</h4><ul><li><a href="#events">Events &amp; packages</a></li><li><a href="${L.reserve.wa}" target="_blank" rel="noopener">Reservations ${L.reserve.phone}</a></li><li><a href="${L.catering.wa}" target="_blank" rel="noopener">Catering ${L.catering.phone}</a></li><li><a href="${L.order}" target="_blank" rel="noopener">Delivery on Beep</a></li></ul></div>
+      <div><h4>Contact</h4><ul><li><a href="#events">Events &amp; packages</a></li><li><a href="${L.reserve.wa}" target="_blank" rel="noopener">Reservations ${L.reserve.phone}</a></li><li><a href="${L.catering.wa}" target="_blank" rel="noopener">Catering ${L.catering.phone}</a></li><li><a href="${L.order}" data-link="order" target="_blank" rel="noopener">${L.grab ? 'Delivery on GrabFood or Beep' : 'Delivery on Beep'}</a></li></ul></div>
       <div><h4>Follow</h4><ul><li><a href="${L.instagram}" target="_blank" rel="noopener">Instagram @flat18my</a></li><li><a href="${L.tiktok}" target="_blank" rel="noopener">TikTok @flat18my</a></li><li><a href="${L.breadbar}" target="_blank" rel="noopener">The Bread Bar</a></li></ul></div>
     </div>
     <div class="foot-bot"><span>© FLAT18 Sdn Bhd (1511667-P) · Open daily 9am – 10pm</span><span>Sister restaurant of The Bread Bar, TTDI &amp; Publika</span></div>
@@ -642,6 +599,24 @@
 
   /* ---------- links, drawer, lightbox ---------- */
   $$('[data-link]').forEach(a => { a.href = a.dataset.link === 'order' ? L.order : L.reserve.wa; });
+
+  /* delivery chooser: every [data-link="order"] is a real Beep link; once links.grab is set it opens the
+     chooser instead (GrabFood first). Native <dialog>: focus stays inside, Esc closes, focus goes back. */
+  const dlg = $('#order-dlg');
+  if (L.grab && dlg && dlg.showModal) {
+    $('#order-grab').href = L.grab;
+    $('#order-beep').href = L.order;
+    let dlgFrom = null;
+    document.addEventListener('click', e => {
+      const a = e.target.closest('[data-link="order"]');
+      if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; // modified clicks still open Beep in a tab
+      e.preventDefault();
+      dlgFrom = a; closeDrawer();
+      dlg.showModal(); $('#order-grab').focus();
+    });
+    dlg.addEventListener('click', e => { if (e.target === dlg || e.target.closest('[data-order-close]') || e.target.closest('.order-opt')) dlg.close(); });
+    dlg.addEventListener('close', () => { if (dlgFrom && dlgFrom.isConnected) dlgFrom.focus({ preventScroll: true }); });
+  }
   const drawer = $('#drawer'), burger = $('[data-drawer]');
   const closeDrawer = () => { drawer.hidden = true; burger.setAttribute('aria-expanded', 'false'); };
   burger.addEventListener('click', () => { const open = drawer.hidden; drawer.hidden = !open; burger.setAttribute('aria-expanded', String(open)); });
@@ -689,7 +664,7 @@
     let target = null;
     if (tok.startsWith('menu-')) target = $('#m-' + tok.slice(5));
     else if (tok.startsWith('events-')) {
-      const sub = tok.slice(7);
+      const sub = tok.slice(7) === 'enquire' ? 'contact' : tok.slice(7); // old enquiry-form links land on the WhatsApp block
       target = $('#ev-' + sub);
     } else if (!['home', 'menu', 'events'].includes(tok)) target = document.getElementById(tok);
     const hdr = $('#hdr').offsetHeight + (want !== 'home' ? 56 : 0);

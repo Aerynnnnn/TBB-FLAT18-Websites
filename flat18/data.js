@@ -1,5 +1,5 @@
 /* FLAT18 — all site content. Menu = the "Our Menu (Flat18)" PDF on the Linktree, word for word. Prices in RM.
-   Photos: assets/photos/food|drinks|cakes (Linktree Drive "Menu Picture References" + "Whole Cakes"),
+   Photos: assets/photos/food|drinks (Linktree Drive "Menu Picture References"),
    the three after-5pm dishes + kids plates come from the PDF itself, assets/photos/space from @flat18my. */
 window.FLAT = {
   name: "FLAT18",
@@ -11,6 +11,9 @@ window.FLAT = {
   links: {
     reserve: { label: "Reservations & private room", phone: "012-497 5626", wa: "https://wa.me/60124975626" },
     catering: { label: "Catering & corporate events", phone: "017-637 5626", wa: "https://wa.me/60176375626" },
+    /* GrabFood store link: paste it here. While empty, every Order button goes straight to Beep;
+       once set, Order opens a small chooser (GrabFood first, then Beep). */
+    grab: "",
     order: "https://flat18.beepit.com/ordering/?h=U2FsdGVkX1%2BT00%2BNm5IejsCQmU%2BNBaj32GLcsz1juk4LF6y30s3kGtKRxDhuKU3j&type=delivery&source=SharedLink&utm_source=store_link&utm_medium=share",
     instagram: "https://www.instagram.com/flat18my/",
     tiktok: "https://www.tiktok.com/@flat18my",
@@ -146,6 +149,14 @@ window.FLAT = {
   /* Events — word for word from the user's PDFs "Flat18 x The Bread Bar" (packages, bookouts, terms) and
      "Mini Pastries Canapes" (catering menu). Media: assets/events (user's Google Photos album "Flat 18 events"). */
   events: {
+    /* WhatsApp messages preloaded by every events CTA (paste the user's text between the quotes).
+       waPrompt -> reservations line (buffets, plated dinners, bookouts, general event CTAs);
+       waPromptCatering -> catering line (canapés & catering CTAs).
+       Write {package} where the package name should go (e.g. "Hi FLAT18, I'd like to ask about {package}.");
+       it becomes "The Gathering", "Canapés & catering" etc. Without {package} the text is sent as is.
+       Empty = WhatsApp opens with no message. */
+    waPrompt: "",
+    waPromptCatering: "",
     tax: "++ Subject to 10% service charge and 6% SST.",
     buffets: [
       { id: "gathering", kicker: "Buffet menu 01", name: "The Gathering", price: 145,
@@ -249,12 +260,5 @@ window.FLAT = {
       ["v152", "outdoor", "Buffet warmers, outdoors"], ["e21", "setups", "Candles and bread"], ["e156", "launch", "Centrepiece detail"],
       ["e76", "corporate", "A full house"], ["e47", "bites", "Avocado prawn toast"], ["e72", "bites", "Mini danish table"]
     ]
-  },
-
-  /* whole cakes: pre-order only, no prices published on the Linktree */
-  cakes: [
-    { n: "Burnt Cheesecake with Matcha Cream", img: "cakes/burnt-cheesecake" },
-    { n: "Carrot & Walnut Cake", img: "cakes/carrot-walnut" },
-    { n: "Flourless Chocolate Cake", img: "cakes/flourless-chocolate" }
-  ]
+  }
 };

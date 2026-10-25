@@ -1,4 +1,4 @@
-/* The Bread Bar — a mix of the deck's references: colour-blocked sections (rust, forest, blush),
+/* The Bread Bar — a mix of the deck's references: colour-blocked sections (rust, plum, blush),
    oval crops on warm cocoa, light uppercase display type, italic serif labels, pill buttons, a service ticker.
    Brand slate blue from the printed menu stays as the anchor colour. */
 :root {
@@ -14,7 +14,7 @@
   --night: #1b1612;
   --cocoa: #4a3a2b;
   --rust: #b5481f;
-  --forest: #3f5b36;
+  --plum: #5e3550; /* Publika's block colour (was forest green until 25 Oct 2026; green is FLAT18's brand) */
   --blush: #f1d6c4;
   --sage: #b9bda7;
   --gold: #e3b98f;
@@ -525,7 +525,7 @@ ul.price-list { list-style: none; margin: 0; padding: 0; }
 .loc-grid { gap: 0; }
 .loc-block { position: relative; text-align: center; padding: clamp(56px, 7vw, 88px) clamp(20px, 4vw, 56px) clamp(40px, 5vw, 64px); color: var(--ink); display: flex; flex-direction: column; align-items: center; gap: 10px; min-width: 0; }
 .loc-ttdi { background: var(--rust); color: #fff4ea; }
-.loc-pub { background: var(--forest); color: #f3efe2; }
+.loc-pub { background: var(--plum); color: #f3efe2; }
 .loc-corners { position: absolute; top: 18px; left: 22px; right: 22px; display: flex; justify-content: space-between; }
 .loc-corners a { font: italic 400 17px var(--serif); color: inherit; text-decoration: none; border-bottom: 1px solid transparent; transition: border-color .2s; }
 .loc-corners a:hover { border-bottom-color: currentColor; }
@@ -832,3 +832,136 @@ a, button, [role="button"] { touch-action: manipulation; }
   .bake.live .bake-links { gap: 6px 18px; }
 }
 .hs-dust i { position: absolute; border-radius: 50%; background: #fff6ea; }
+
+/* =====================================================================
+   User feedback pass, 25 Oct 2026: Publika plum, louder Location/Reserve, clearer bake, day-to-night hours
+   ===================================================================== */
+/* header: Reserve is a real button next to Order */
+.nav-right { gap: 10px; }
+.btn-order { min-height: 44px; padding: 0 24px; font-size: 13.5px; letter-spacing: .14em; }
+.btn-reserve { background: transparent; color: var(--blue); border: 1.5px solid var(--blue); }
+.btn-reserve:hover { background: var(--blue); color: var(--cream); border-color: var(--blue); }
+@media (max-width: 920px) {
+  .nav-right { gap: 6px; }
+  .btn-order { min-height: 38px; padding: 0 13px; font-size: 12px; letter-spacing: .1em; }
+}
+@media (max-width: 360px) { .btn-order { padding: 0 10px; letter-spacing: .06em; } }
+
+/* outlet blocks: corner links are buttons, address and hours read at a glance */
+.loc-block { padding-top: clamp(92px, 9vw, 116px); }
+.loc-corners { top: 20px; left: 20px; right: 20px; gap: 10px; }
+.loc-corners a { font: 500 15px/1 var(--display); letter-spacing: .12em; text-transform: uppercase; font-style: normal;
+  padding: 13px 18px; border: 1.5px solid currentColor; border-radius: 999px; transition: background .2s, color .2s; }
+.loc-corners a:hover { background: #fff4ea; color: var(--ink); border-color: #fff4ea; }
+.loc-sub { font-size: 20px; opacity: 1; }
+.loc-block address { font-size: clamp(17px, 1.45vw, 20px); font-weight: 500; line-height: 1.5; }
+.loc-block .loc-meta { font: 500 16px/1.5 var(--display); letter-spacing: .04em; opacity: 1; margin: 4px 0 12px; }
+.loc-block .cta-note { opacity: 1; font-size: 15px; }
+@media (max-width: 420px) { .loc-corners a { font-size: 13px; padding: 11px 14px; letter-spacing: .1em; } }
+/* Locations dropdown + outlet chooser carry the outlet colours */
+.dd-card b { font-size: 24px; }
+.dd-card small { font-size: 14px; color: var(--ink); }
+.dd-card:nth-child(1) b, .choice:nth-child(1) b { color: var(--rust); }
+.dd-card:nth-child(2) b, .choice:nth-child(2) b { color: var(--plum); }
+.choice:nth-child(1) { border-top: 6px solid var(--rust); }
+.choice:nth-child(2) { border-top: 6px solid var(--plum); }
+.choice small { color: var(--ink); font-size: 15px; }
+
+/* "From flour to counter": segmented progress bar, a step list that clearly lights up, caption on the image */
+.bake.live { height: 240vh; }
+.bake-bar { display: none; grid-template-columns: repeat(5, 1fr); gap: 6px; max-width: 440px; margin: clamp(18px, 2.2vw, 26px) 0 clamp(14px, 2vw, 22px); }
+.bake.live .bake-bar { display: grid; }
+.bake-bar b { height: 5px; border-radius: 3px; background: rgba(34,28,23,.14); overflow: hidden; }
+.bake-bar i { display: block; height: 100%; background: var(--rust); transform: scaleX(0); transform-origin: 0 50%; }
+.bake-steps { gap: 4px; }
+.bake-steps li { width: fit-content; max-width: 100%; } /* so the lit line's scale-up never widens the page */
+.bake.live .bake-steps li { opacity: .38; transform-origin: 0 50%;
+  transition: opacity .25s var(--ease-out), color .25s var(--ease-out), transform .3s var(--ease-out), font-weight .25s; }
+.bake.live .bake-steps li.done { opacity: .7; }
+.bake.live .bake-steps li.done::before { transform: scaleX(.5); background: var(--ink); }
+.bake.live .bake-steps li.on { opacity: 1; color: var(--rust); font-weight: 500; transform: translateX(6px) scale(1.07); }
+.bake.live .bake-steps li.on::before { transform: scaleX(1); height: 3px; }
+.bk-cap { left: 16px; bottom: 16px; right: auto; max-width: calc(100% - 32px); background: #fff4ea; color: var(--ink); text-shadow: none;
+  padding: 12px 18px 13px; display: grid; gap: 3px; box-shadow: 0 14px 30px -16px rgba(0,0,0,.55); }
+.bk-cap b { font: 500 12.5px/1 var(--display); letter-spacing: .2em; text-transform: uppercase; color: var(--rust); }
+.bk-cap span { font: italic 400 clamp(18px, 1.7vw, 23px)/1.2 var(--serif); }
+.bk-cap.swap { animation: capIn .45s var(--ease-out); }
+@keyframes capIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@media (max-width: 760px) {
+  .bake.live .bake-bar { margin: 10px 0 8px; gap: 4px; }
+  .bake.live .bake-steps li { font-size: 16.5px; }
+  .bake.live .bake-steps li.on { transform: translateX(4px) scale(1.05); }
+  .bk-cap { left: 10px; bottom: 10px; padding: 8px 12px 9px; }
+  .bk-cap span { font-size: 16px; }
+}
+
+/* "Open every day": the day runs 8am > 10pm. Static (reduced motion): the arc drawn, five moments in a row. */
+.day { --ground: var(--cream); --moon: 0; background: var(--ground); color: var(--ink); border-top: 1px solid var(--line);
+  padding: clamp(64px, 9vw, 112px) 0; transition: color .35s var(--ease-out); }
+.day.is-night { color: #fff4ea; }
+.day-wrap { display: grid; gap: clamp(30px, 4.6vh, 48px); }
+.day-sky { position: relative; height: clamp(70px, 13vh, 150px); margin: 0 clamp(0px, 2vw, 24px); }
+.day-arc { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.day-arc path { fill: none; vector-effect: non-scaling-stroke; }
+.arc-base { stroke: currentColor; stroke-opacity: .22; stroke-width: 1.5; stroke-dasharray: 2 6; }
+.arc-lit { stroke: var(--rust); stroke-width: 3; stroke-linecap: round; }
+.day.is-night .arc-lit { stroke: var(--gold); }
+.day-orb { position: absolute; left: 50%; top: 10%; width: clamp(26px, 3vw, 40px); aspect-ratio: 1; transform: translate(-50%, -50%); display: none; }
+.day-orb i { position: absolute; inset: 0; border-radius: 50%; }
+.day-orb .sun { background: radial-gradient(circle at 40% 40%, #ffd9a0, #e9934f); box-shadow: 0 0 0 6px rgba(233,147,79,.18), 0 0 34px 8px rgba(233,147,79,.45); opacity: calc(1 - var(--moon)); }
+.day-orb .moon { box-shadow: inset -9px 3px 0 0 #fff4ea; transform: rotate(-20deg); filter: drop-shadow(0 0 10px rgba(255,244,234,.35)); opacity: var(--moon); }
+.day-end { position: absolute; bottom: -18px; font: 500 13px/1 var(--display); letter-spacing: .16em; text-transform: uppercase; opacity: .75; }
+.day-end-l { left: 0; transform: translateY(100%); } .day-end-r { right: 0; transform: translateY(100%); }
+.day-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 5vw, 80px); align-items: center; }
+.day-clock { display: none; margin: 0; font: 300 clamp(64px, min(10vw, 17vh), 156px)/.9 var(--display); letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+.day-clock small { font-size: .32em; letter-spacing: .08em; margin-left: .18em; text-transform: uppercase; }
+.day-line { display: none; margin: clamp(8px, 1.4vh, 14px) 0 clamp(14px, 2.4vh, 26px); font: italic 400 clamp(20px, 2vw, 28px)/1.25 var(--serif); }
+.day h2 { font-size: clamp(28px, 3.4vw, 48px); line-height: 1.06; margin-bottom: 14px; }
+.day-sub { max-width: 46ch; font-size: 17px; opacity: .85; }
+.day-status { display: inline-flex; align-items: center; gap: 10px; margin: 4px 0 18px; font: 500 15px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; }
+.day-status i { width: 10px; height: 10px; border-radius: 50%; background: var(--muted); box-shadow: 0 0 0 4px rgba(110,98,87,.18); }
+.day.day-open .day-status i { background: var(--rust); box-shadow: 0 0 0 4px rgba(181,72,31,.2); }
+.day.is-night.day-open .day-status i { background: var(--gold); box-shadow: 0 0 0 4px rgba(227,185,143,.25); }
+.day-reserve { min-height: 52px; padding: 0 34px; font-size: 15px; }
+.day.is-night .day-reserve { background: #fff4ea; color: var(--ink); border-color: #fff4ea; }
+.day.is-night :focus-visible { outline-color: #fff4ea; }
+.day-photos { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+.day-shot { margin: 0; min-width: 0; }
+.day-shot img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; background: var(--night); }
+.day-shot figcaption { padding-top: 8px; font: 400 15px/1.3 var(--serif); }
+.day-shot figcaption b { display: block; font: 500 11.5px/1.2 var(--display); letter-spacing: .18em; text-transform: uppercase; color: var(--rust); margin-bottom: 2px; }
+.day:not(.live) .day-grid { grid-template-columns: 1fr; }
+.day:not(.live) .day-sky { height: clamp(60px, 8vw, 96px); }
+.day:not(.live) .day-copy { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: clamp(24px, 5vw, 80px); align-items: start; }
+.day:not(.live) .day-copy h2 { grid-column: 1; grid-row: 1 / span 4; }
+.day:not(.live) .day-copy > :not(h2) { grid-column: 2; }
+.day:not(.live) .day-status { justify-self: start; }
+@media (max-width: 760px) { .day:not(.live) .day-copy { display: block; } }
+/* live: one short pin (190vh, shorter than the bake so it stays a secondary moment) */
+.day.live { height: 190vh; padding: 0; }
+.day.live .day-pin { position: sticky; top: 62px; height: calc(100svh - 62px); display: grid; align-content: center; overflow: hidden; }
+.day.live .day-pin > .wrap { width: 100%; }
+.day.live .day-orb, .day.live .day-clock, .day.live .day-line { display: block; }
+.day.live .day-sub { display: none; }
+.day.live .day-photos { display: block; position: relative; height: min(calc(100svh - 62px - 13vh - 140px), 600px); }
+.day.live .day-shot { position: absolute; inset: 0; opacity: 0; transition: opacity .5s var(--ease-out); }
+.day.live .day-shot.on { opacity: 1; }
+.day.live .day-shot img { height: 100%; aspect-ratio: auto; }
+.day.live .day-shot figcaption { position: absolute; left: 14px; bottom: 14px; padding: 10px 16px 11px; background: #fff4ea; color: var(--ink); font-size: clamp(17px, 1.5vw, 21px); font-style: italic; }
+.day.is-night .day-shot figcaption b { color: var(--rust); }
+@media (max-width: 760px) {
+  .day-photos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .day-shot:last-child { grid-column: span 2; }
+  .day-shot:last-child img { aspect-ratio: 16 / 9; }
+  .day-sky { height: 64px; margin: 0 6px 18px; }
+  .day.live .day-wrap { gap: 10px; }
+  .day.live .day-grid { grid-template-columns: 1fr; gap: 12px; }
+  .day.live .day-photos { order: -1; height: min(30svh, 260px); }
+  .day.live .day-shot:last-child img { aspect-ratio: auto; }
+  .day-clock { font-size: clamp(52px, 16vw, 72px); }
+  .day.live .day-line { margin: 4px 0 8px; font-size: 18px; }
+  .day.live h2 { font-size: 22px; margin-bottom: 8px; }
+  .day.live .day-status { margin: 0 0 10px; font-size: 13px; }
+  .day-reserve { min-height: 48px; }
+  .day.live .cta-note { display: none; }
+}

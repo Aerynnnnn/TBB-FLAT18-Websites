@@ -30,7 +30,7 @@
     return `
     <article class="loc-block loc-${key} reveal">
       <div class="loc-corners">
-        <a href="${o.whatsapp}" target="_blank" rel="noopener">Reserve</a>
+        <a href="${o.whatsapp}" target="_blank" rel="noopener">Reserve a table</a>
         <a href="${o.maps}" target="_blank" rel="noopener">Directions</a>
       </div>
       <h3 class="loc-name">${esc(o.name)}</h3>
@@ -90,6 +90,26 @@
     return out;
   })();
   const BAKE_STEPS = ["Stone-milled flour.", "Water, salt and a living starter.", "A long, slow prove.", "Into the oven.", "Onto the counter, every morning."];
+  // What the stage is showing at each step (caption on the image, synced to the lit step line).
+  const BAKE_CAPS = [["Flour", "Sifting stone-milled flour"], ["Dough", "Folding the dough by hand"], ["Prove", "Rising, slow and long"],
+    ["Oven", "Baking to a deep crust"], ["Counter", "Out of the oven, onto the counter"]];
+  // "Out of the oven" on the home page: which loaves it shows (by photo slug). Focaccia replaced the Brown Butter Oat
+  // there at the user's request (25 Oct 2026); the full list on the Bakery page is unchanged.
+  const OVEN = ["bread-country-brown", "bread-focaccia-olives", "bread-ancient-grain", "bread-wholemeal-rye"];
+  // "Open every day": the day runs 8am > 10pm under the scroll. Real TBB photos and real menu items only.
+  const DAY = [
+    { h: 8, when: "Morning", img: "pastry-counter", cap: "The pastry counter", line: "Coffee and the morning's bakes." },
+    { h: 10.5, when: "Brunch", img: "turkish-eggs", cap: "Turkish Eggs", line: "Brunch, served until 5pm." },
+    { h: 14, when: "Afternoon", img: "spanish-latte", cap: "Spanish Latte", line: "A slow coffee in the afternoon." },
+    { h: 17.5, when: "Evening", img: "herb-crusted-seabass", cap: "Herb Crusted Seabass", line: "Hearty plates and pasta into the evening." },
+    { h: 20, when: "Night", img: "space-service", cap: "Dinner service", line: "Open until 10pm, every day." },
+  ];
+  const DAY_ARC = "M20,190 Q500,-150 980,190";
+  // Live state in Malaysia time (UTC+8), whatever the visitor's own clock says.
+  const dayStatus = () => {
+    const d = new Date(), h = (d.getUTCHours() + 8) % 24 + d.getUTCMinutes() / 60;
+    return h >= 8 && h < 22 ? "Open now, until 10pm" : "Closed now, opens at 8am";
+  };
 
   // Product tile: photo or drawing on a soft card, name, one line of detail.
   const productCard = (media, name, meta, href, tag) => `
@@ -140,7 +160,7 @@
       <div class="wrap bake-pin">
         <div class="bake-text">
           <h2 class="display-xl">From flour to counter</h2>
-          <div class="story-progress" aria-hidden="true"><span></span></div>
+          <div class="bake-bar" aria-hidden="true">${BAKE_STEPS.map(() => "<b><i></i></b>").join("")}</div>
           <ol class="bake-steps">${BAKE_STEPS.map((s) => `<li>${esc(s)}</li>`).join("")}</ol>
           <nav class="bake-links" aria-label="From the bakery">
             <a class="link-arrow" href="#bakery-loaves">Our sourdough</a><a class="link-arrow" href="#bakery-pastry">Pastries</a><a class="link-arrow" href="#about">Our story</a>
@@ -152,7 +172,7 @@
           <div class="bk bk-glow"></div>
           <div class="bk bk-loaf"><img class="bk-raw" src="assets/cutouts/sourdough.png" alt="" width="600" height="360"><img class="bk-baked" src="assets/cutouts/sourdough.png" alt="" width="600" height="360"></div>
           <div class="bk bk-counter">${vid("bread-stop-motion")}</div>
-          <p class="bk-cap"></p>
+          <p class="bk-cap"><b></b><span></span></p>
         </div>
       </div>
     </section>
@@ -166,7 +186,7 @@
           <a class="link-arrow" href="#bakery-loaves">See all 8 loaves</a>
         </div>
         <div class="product-grid">
-          ${D.loaves.slice(0, 4).map((l) => productCard(photo(l.img), l.n, `RM ${l.p} · ${l.g}g`, "#bakery-loaves")).join("")}
+          ${OVEN.map((img) => D.loaves.find((l) => l.img === img)).filter(Boolean).map((l) => productCard(photo(l.img), l.n, `RM ${l.p} · ${l.g}g`, "#bakery-loaves")).join("")}
         </div>
       </div>
     </section>
@@ -199,28 +219,32 @@
       </div>
     </section>
 
-    <section class="take-time has-vid">
-      ${vid("dough-smooth")}
-      <div class="wrap take-grid">
-        <div class="take-art reveal" aria-hidden="true">${art("loaf", "")}</div>
-        <div class="reveal">
-          <p class="take-kicker">Take your time.</p>
-          <h2>Open every day,<br>8am till 10pm.</h2>
-          <p>Brunch until 5pm, hearty plates, pasta and coffee all day, and a counter of fresh bakes until they run out.</p>
-          <button class="btn btn-pill" data-chooser="reserve">Reserve a table</button>
-          <p class="cta-note">Book on WhatsApp with the outlet you’re visiting.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="shop-teaser">
-      <div class="wrap">
-        <div class="section-head reveal">
-          <h2 class="display-xl">The T.B.B shop</h2>
-          <a class="link-arrow" href="#shop">Shop tees &amp; totes</a>
-        </div>
-        <div class="product-grid">
-          ${D.shop.items.filter((x) => x.feature).map((x) => productCard(x.img ? photo(x.img) : art(x.art, x.n), x.n, x.line, "#shop", x.tag)).join("")}
+    <section class="day" data-day aria-label="Opening hours">
+      <div class="day-pin">
+        <div class="wrap day-wrap">
+          <div class="day-sky" aria-hidden="true">
+            <svg class="day-arc" viewBox="0 0 1000 200" preserveAspectRatio="none">
+              <defs><clipPath id="day-clip"><rect class="day-clip" x="0" y="-20" width="1000" height="240"></rect></clipPath></defs>
+              <path class="arc-base" d="${DAY_ARC}"></path>
+              <path class="arc-lit" d="${DAY_ARC}" clip-path="url(#day-clip)"></path>
+            </svg>
+            <span class="day-orb"><i class="sun"></i><i class="moon"></i></span>
+            <span class="day-end day-end-l">8am</span><span class="day-end day-end-r">10pm</span>
+          </div>
+          <div class="day-grid">
+            <div class="day-copy">
+              <p class="day-clock" aria-hidden="true">8:00<small>am</small></p>
+              <p class="day-line" aria-hidden="true">${esc(DAY[0].line)}</p>
+              <h2>Open every day,<br>8am to 10pm.</h2>
+              <p class="day-sub">Brunch until 5pm, hearty plates, pasta and coffee all day, and a counter of fresh bakes until they run out.</p>
+              <p class="day-status" data-day-status><i></i><span>${dayStatus()}</span></p>
+              <div class="day-cta"><button class="btn btn-pill day-reserve" data-chooser="reserve">Reserve a table</button></div>
+              <p class="cta-note">Book on WhatsApp with the outlet you’re visiting.</p>
+            </div>
+            <div class="day-photos">
+              ${DAY.map((m, i) => `<figure class="day-shot${i ? "" : " on"}"><img src="${photo(m.img)}" alt="${esc(m.cap)}" loading="lazy"><figcaption><b>${esc(m.when)}</b>${esc(m.cap)}</figcaption></figure>`).join("")}
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -234,6 +258,18 @@
         </div>
         <div class="tv-row">${tv("pain-au-chocolat-stack")}${tv("dough-fold")}${tv("dough-smooth")}</div>
         <div class="cta-row" style="justify-content:center"><a class="btn btn-pill" href="#events">Plan your event</a></div>
+      </div>
+    </section>
+
+    <section class="shop-teaser">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <h2 class="display-xl">The T.B.B shop</h2>
+          <a class="link-arrow" href="#shop">Shop tees &amp; totes</a>
+        </div>
+        <div class="product-grid">
+          ${D.shop.items.filter((x) => x.feature).map((x) => productCard(x.img ? photo(x.img) : art(x.art, x.n), x.n, x.line, "#shop", x.tag)).join("")}
+        </div>
       </div>
     </section>
 
@@ -804,9 +840,45 @@
     return clamp01((PIN_TOP - r.top) / Math.max(1, r.height - pin.offsetHeight));
   };
   const put = (el, tf, op) => { if (!el) return; el.style.transform = tf; if (op != null) el.style.opacity = op.toFixed(3); };
-  const BAKE_CAPS = ["Flour", "Dough", "Prove", "Oven", "Counter"];
+  // "Open every day" (a secondary moment, shorter pin than the bake): the clock runs 8am > 10pm, the sun climbs its arc
+  // and sets into a moon, the ground goes cream > afternoon sand > cocoa > night, and the photo follows the time of day.
+  const DAY_GROUND = [[8, [255, 250, 241]], [12, [247, 238, 222]], [16, [238, 214, 180]], [18, [176, 112, 72]], [19.5, [74, 58, 43]], [22, [27, 22, 18]]];
+  const groundAt = (h) => {
+    let i = 0; while (i < DAY_GROUND.length - 2 && DAY_GROUND[i + 1][0] <= h) i++;
+    const [h0, a] = DAY_GROUND[i], [h1, b] = DAY_GROUND[i + 1], t = clamp01((h - h0) / (h1 - h0));
+    return a.map((v, k) => Math.round(v + (b[k] - v) * t));
+  };
+  const lum = ([r, g, b]) => (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+  function syncDay(live) {
+    const day = $("[data-day]");
+    if (!day) return;
+    const st = $("[data-day-status] span", day), s = dayStatus();
+    if (st.textContent !== s) st.textContent = s;
+    day.classList.toggle("day-open", s.startsWith("Open"));
+    day.classList.toggle("live", live);
+    const shots = $$(".day-shot", day);
+    if (!live) { day.style.removeProperty("--ground"); day.classList.remove("is-night"); shots.forEach((f) => f.classList.add("on")); return; }
+    const p = progress(day, $(".day-pin", day)), h = 8 + 14 * p;
+    const g = groundAt(h);
+    day.style.setProperty("--ground", `rgb(${g.join(",")})`);
+    day.classList.toggle("is-night", lum(g) < 0.42);
+    // sun on the quadratic arc (viewBox 1000x200): x is linear in t, so a clip rect up to the sun draws the arc behind it
+    const x = 20 + 960 * p, y = (1 - p) * (1 - p) * 190 + 2 * (1 - p) * p * -150 + p * p * 190;
+    const orb = $(".day-orb", day);
+    orb.style.left = `${(x / 10).toFixed(2)}%`; orb.style.top = `${(y / 2).toFixed(2)}%`;
+    $(".day-clip", day).setAttribute("width", x.toFixed(1));
+    day.style.setProperty("--moon", ramp(18.6, 19.4, h).toFixed(3));
+    const mins = Math.round(h * 4) * 15, hh = Math.floor(mins / 60) % 24, mm = mins % 60;
+    const clock = `${((hh + 11) % 12) + 1}:${String(mm).padStart(2, "0")}<small>${hh < 12 ? "am" : "pm"}</small>`;
+    const c = $(".day-clock", day); if (c.innerHTML !== clock) c.innerHTML = clock;
+    let at = 0; DAY.forEach((m, i) => { if (h >= m.h) at = i; });
+    shots.forEach((f, i) => f.classList.toggle("on", i === at));
+    const line = $(".day-line", day); if (line.textContent !== DAY[at].line) line.textContent = DAY[at].line;
+    day.dataset.p = p.toFixed(2);
+  }
   function syncScenes() {
     const live = motionOK.matches;
+    syncDay(live);
     const hero = $("[data-hero]");
     if (hero) {
       hero.classList.toggle("live", live);
@@ -845,10 +917,15 @@
       put($(".bk-baked", bake), "none", baked);
       put($(".bk-glow", bake), `scale(${(0.7 + 0.4 * ramp(0.56, 0.74, p)).toFixed(3)})`, ramp(0.56, 0.68, p) * (1 - ramp(0.8, 0.9, p)));
       put($(".bk-counter", bake), "none", ramp(0.82, 0.9, p));
-      $(".story-progress span", bake).style.transform = `scaleX(${p.toFixed(3)})`;
+      // segmented bar: one segment per step, each fills while its step is on screen
+      $$(".bake-bar i", bake).forEach((el, i) => { el.style.transform = `scaleX(${ramp(i * 0.2, i * 0.2 + 0.2, p).toFixed(3)})`; });
       steps.forEach((li, i) => { li.classList.toggle("on", i === at); li.classList.toggle("done", i < at); });
       const cap = $(".bk-cap", bake);
-      if (cap.textContent !== BAKE_CAPS[at]) cap.textContent = BAKE_CAPS[at];
+      if (cap.dataset.at !== String(at)) {
+        cap.dataset.at = at;
+        $("b", cap).textContent = BAKE_CAPS[at][0]; $("span", cap).textContent = BAKE_CAPS[at][1];
+        cap.classList.remove("swap"); void cap.offsetWidth; cap.classList.add("swap");
+      }
       bake.dataset.p = p.toFixed(2);
     }
   }

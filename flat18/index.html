@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=9eb2d700ca">
+<link rel="stylesheet" href="styles.css?v=c490e008cd">
 </head>
 <body>
 
@@ -30,7 +30,6 @@
     <button class="burger" aria-label="Open menu" aria-expanded="false" data-drawer><span></span><span></span></button>
     <nav class="nav nav-l" aria-label="Primary">
       <a href="#menu" data-nav="menu">Menu</a>
-      <a href="#cakes" data-nav="cakes">Whole cakes</a>
       <a href="#events" data-nav="events">Events</a>
       <a href="#visit" data-nav="visit">Visit</a>
     </nav>
@@ -50,7 +49,6 @@
   <nav class="drawer-nav" aria-label="Mobile">
     <a href="#home">Home</a>
     <a href="#menu">Menu</a>
-    <a href="#cakes">Whole cakes</a>
     <a href="#events">Events &amp; catering</a>
     <a href="#visit">Visit us</a>
   </nav>
@@ -70,7 +68,18 @@
   <figure><img alt=""><video muted loop playsinline controls hidden></video><figcaption></figcaption></figure>
 </div>
 
-<script src="data.js?v=24159d2cf0"></script>
-<script src="app.js?v=e814de4c55"></script>
+<!-- delivery chooser: only used once links.grab is set in data.js -->
+<dialog class="order-dlg" id="order-dlg" aria-labelledby="order-ttl"><div class="order-in">
+  <button class="order-x" type="button" aria-label="Close" data-order-close>&times;</button>
+  <h2 id="order-ttl">Order delivery</h2>
+  <p>Pick the app you'd rather use. Both open in a new tab.</p>
+  <div class="order-opts">
+    <a class="order-opt order-main" id="order-grab" href="#" target="_blank" rel="noopener"><b>GrabFood</b><small>Delivery</small></a>
+    <a class="order-opt" id="order-beep" href="#" target="_blank" rel="noopener"><b>Beep</b><small>Delivery, pre-order, pickup</small></a>
+  </div>
+</div></dialog>
+
+<script src="data.js?v=504341e596"></script>
+<script src="app.js?v=0da7896fd4"></script>
 </body>
 </html>
