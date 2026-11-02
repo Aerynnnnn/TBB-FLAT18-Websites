@@ -1,6 +1,6 @@
 /* FLAT18 — all site content. Menu = the "Our Menu (Flat18)" PDF on the Linktree, word for word. Prices in RM.
    Photos: assets/photos/food|drinks (Linktree Drive "Menu Picture References"),
-   the three after-5pm dishes + kids plates come from the PDF itself, assets/photos/space from @flat18my. */
+   the three after-5pm dishes + kids plates come from the PDF itself, assets/photos/private-room from the user's album. */
 window.FLAT = {
   name: "FLAT18",
   tagline: "A hug for your tastebuds",
@@ -18,6 +18,44 @@ window.FLAT = {
     instagram: "https://www.instagram.com/flat18my/",
     tiktok: "https://www.tiktok.com/@flat18my",
     breadbar: "https://www.instagram.com/thebreadbarmy/"
+  },
+
+  /* Private Dining Room (home #private-room; #room lands there too) — word for word from the user's
+     "Private Dining Room / Booking Terms & Conditions" text (2 Nov 2026). Photos: user's Google Photos album
+     "Private Room Picture reference" (photos.app.goo.gl/pEVrrDFSWZWVYYVu8), re-saved ≤1400px. */
+  privateRoom: {
+    title: "Private Dining Room",
+    capacity: "Our Private Dining Room comfortably accommodates 10–12 guests.",
+    spendHead: "Minimum Spend & Duration",
+    spend: [
+      { days: "Monday – Thursday", min: 500, hours: "2.5 hours" },
+      { days: "Friday – Sunday & Public Holidays", min: 700, hours: "2.5 hours" }
+    ],
+    bigGroup: "Groups of 13–16 guests: Additional RM200 minimum spend applies.",
+    depositHead: "Booking Deposit",
+    deposit: ["RM250 deposit required to secure your reservation.", "Deposit will be deducted from the final bill."],
+    termsHead: "Booking Terms & Conditions",
+    cancellationHead: "Cancellation Policy",
+    cancellation: [
+      { days: "Monday – Thursday", items: ["At least 3 days' notice: Full deposit refund.", "Less than 3 days' notice: Deposit converted to store credit."] },
+      { days: "Friday – Sunday & Public Holidays", items: ["Deposits are non-refundable and will be converted to store credit upon cancellation."] }
+    ],
+    creditNote: "Store credit is valid for 1 month from the cancellation date.",
+    cleaningHead: "Cleaning & Damages",
+    cleaning: ["Excessive cleaning: RM200 cleaning fee.", "Any damages to the room, furniture, or equipment will be charged based on actual repair or replacement costs."],
+    termsMoreHead: "Additional Terms",
+    terms: [
+      "The 2.5-hour allocation begins at the confirmed reservation time.",
+      "Extensions are subject to availability and prior management approval.",
+      "Bookings are confirmed upon receipt of deposit."
+    ],
+    /* [file in assets/photos/private-room, alt text]; the first one is the large photo */
+    photos: [
+      ["room-wide", "The private dining room: the long table beside the glass wall"],
+      ["table-set", "The private room table set with candles, flowers and a table runner"],
+      ["table-bench", "The private room table with bench seating along the wall"],
+      ["window-side", "The private room table seen from the window side"]
+    ]
   },
 
   /* menu sections; `when` is the line printed beside each heading in the PDF */

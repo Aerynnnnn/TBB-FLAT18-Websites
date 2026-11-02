@@ -53,6 +53,46 @@
   const find = name => { for (const s of F.menu) for (const g of s.groups) for (const it of g.items) if (it.n === name) return { ...it, sec: s.id, group: g.head }; };
   const L = F.links;
 
+  /* ---------- private dining room (home, #private-room; content in data.js -> privateRoom) ---------- */
+  function privateRoom() {
+    const R = F.privateRoom;
+    const pic = f => `assets/photos/private-room/${f}.jpg`;
+    const li = list => `<ul>${list.map(t => `<li>${esc(t)}</li>`).join('')}</ul>`;
+    return `
+<section class="sec pdr" id="private-room" aria-labelledby="pdr-h">
+  <div class="wrap">
+    <div class="pdr-top">
+      <div class="pdr-main">
+        <div class="sec-head" style="margin-bottom:22px"><h2 id="pdr-h">${esc(R.title)}</h2><p class="pdr-cap">${esc(R.capacity)}</p></div>
+        <h3 class="pdr-lbl">${esc(R.spendHead)}</h3>
+        <div class="pdr-spend">${R.spend.map(s => `<div>
+          <p class="pdr-days">${esc(s.days)}</p>
+          <p class="pdr-min"><b>RM${s.min}</b> <span>minimum spend</span></p>
+          <p class="pdr-hrs">${esc(s.hours)}</p>
+        </div>`).join('')}</div>
+        <p class="pdr-big">${esc(R.bigGroup)}</p>
+        <h3 class="pdr-lbl">${esc(R.depositHead)}</h3>
+        <div class="pdr-dep">${li(R.deposit)}</div>
+        <p class="pdr-cta"><a class="btn" href="${evWa('the private dining room')}" target="_blank" rel="noopener">Book the private room on WhatsApp</a></p>
+      </div>
+      <div class="pdr-pics">${R.photos.map(([f, alt], i) => `<button class="pdr-pic${i ? '' : ' pdr-pic-main'}" data-lb="${pic(f)}" data-cap="${esc(alt)}" aria-label="Open photo: ${esc(alt)}"><img src="${pic(f)}" alt="${esc(alt)}" width="1050" height="1400" loading="lazy"></button>`).join('')}</div>
+    </div>
+    <div class="pdr-terms">
+      <h3>${esc(R.termsHead)}</h3>
+      <div class="pdr-cols">
+        <div>
+          <h4>${esc(R.cancellationHead)}</h4>
+          ${R.cancellation.map(c => `<p class="pdr-sub">${esc(c.days)}</p>${li(c.items)}`).join('')}
+          <p class="pdr-note">${esc(R.creditNote)}</p>
+        </div>
+        <div><h4>${esc(R.cleaningHead)}</h4>${li(R.cleaning)}</div>
+        <div><h4>${esc(R.termsMoreHead)}</h4>${li(R.terms)}</div>
+      </div>
+    </div>
+  </div>
+</section>`;
+  }
+
   /* ---------- home ---------- */
   function home() {
     const st = status();
@@ -188,19 +228,7 @@
   </div>
 </section>
 
-<section class="sec" id="room">
-  <div class="wrap room">
-    <div class="room-pics">
-      <figure><img src="assets/photos/space/glass-wall.jpg" alt="The glass wall at FLAT18 looking out to the trees" loading="lazy"></figure>
-      <figure><img src="assets/photos/space/table-spread.jpg" alt="A table of steak and eggs, pasta and charred carrots" loading="lazy"></figure>
-    </div>
-    <div>
-      <div class="sec-head" style="margin-bottom:22px"><h2>Glass walls, green outside</h2></div>
-      <p class="lede">A ground-floor room in Mutiara Damansara with glass on every side. Bright and easy at brunch, lower and slower once the sun goes down.</p>
-      <p style="color:var(--muted);max-width:52ch;margin:0">Pork-free kitchen. Families welcome, with a kids' menu and babycinos. Ask about the private room for birthdays, team lunches and small celebrations.</p>
-    </div>
-  </div>
-</section>
+${privateRoom()}
 
 <section class="sec evt-teaser" id="private">
   <div class="wrap evt-teaser-in">
@@ -239,7 +267,7 @@
       <dl>
         <div><dt>Address</dt><dd>${F.address.join('<br>')}<small><a href="${F.maps}" target="_blank" rel="noopener">Open in Google Maps →</a></small></dd></div>
         <div><dt>Hours</dt><dd>Open daily, 9am – 10pm</dd></div>
-        <div><dt>Reservations &amp; private room</dt><dd><a href="${evWa('a table')}" target="_blank" rel="noopener">${L.reserve.phone}</a><small>WhatsApp</small></dd></div>
+        <div><dt>Reservations &amp; private room</dt><dd><a href="${evWa('a table')}" target="_blank" rel="noopener">${L.reserve.phone}</a><small>WhatsApp · <a href="#private-room">Private dining room</a></small></dd></div>
         <div><dt>Delivery, pre-orders &amp; pickup</dt><dd><a href="${L.order}" data-link="order" target="_blank" rel="noopener">${L.grab ? 'Order on GrabFood or Beep' : 'Order on Beep'}</a></dd></div>
       </dl>
     </div>
@@ -486,7 +514,7 @@
       ${[...E.buffets.map(p => [p, 'Buffet']), ...E.plated.map(p => [p, '3-course plated'])].map(([p, k]) => `<a class="pk" href="#events-${p.id}">
         <span class="pk-k">${k}</span><h3>${esc(p.name)}</h3><b>RM${p.price}<sup>++</sup><small> / guest</small></b><p>${esc(p.blurb)}</p><span class="pk-go">See the menu →</span></a>`).join('')}
     </div>
-    <p class="fineprint">${E.tax} Full restaurant bookouts apply for events of 40 guests and above.</p>
+    <p class="fineprint">${E.tax} Full restaurant bookouts apply for events of 40 guests and above. For a smaller group, see our <a href="#private-room">Private Dining Room</a>.</p>
   </section>
 
   <section class="msec" id="ev-buffet">
@@ -591,7 +619,7 @@
     <div class="foot-top">
       <div><a href="#home" class="mark" aria-label="FLAT18 home">F<i>LA</i>T<sup>18</sup></a><p style="margin-top:14px;opacity:.85">A hug for your tastebuds.<br>Bringing classics back.</p></div>
       <div><h4>Visit</h4><ul>${F.address.map(a => `<li>${a}</li>`).join('')}<li><a href="${F.maps}" target="_blank" rel="noopener">Google Maps →</a></li></ul></div>
-      <div><h4>Contact</h4><ul><li><a href="#events">Events &amp; packages</a></li><li><a href="${evWa('a table')}" target="_blank" rel="noopener">Reservations ${L.reserve.phone}</a></li><li><a href="${L.catering.wa}" target="_blank" rel="noopener">Catering ${L.catering.phone}</a></li><li><a href="${L.order}" data-link="order" target="_blank" rel="noopener">${L.grab ? 'Delivery on GrabFood or Beep' : 'Delivery on Beep'}</a></li></ul></div>
+      <div><h4>Contact</h4><ul><li><a href="#events">Events &amp; packages</a></li><li><a href="#private-room">Private dining room</a></li><li><a href="${evWa('a table')}" target="_blank" rel="noopener">Reservations ${L.reserve.phone}</a></li><li><a href="${L.catering.wa}" target="_blank" rel="noopener">Catering ${L.catering.phone}</a></li><li><a href="${L.order}" data-link="order" target="_blank" rel="noopener">${L.grab ? 'Delivery on GrabFood or Beep' : 'Delivery on Beep'}</a></li></ul></div>
       <div><h4>Follow</h4><ul><li><a href="${L.instagram}" target="_blank" rel="noopener">Instagram @flat18my</a></li><li><a href="${L.tiktok}" target="_blank" rel="noopener">TikTok @flat18my</a></li><li><a href="${L.breadbar}" target="_blank" rel="noopener">The Bread Bar</a></li></ul></div>
     </div>
     <div class="foot-bot"><span>© FLAT18 Sdn Bhd (1511667-P) · Open daily 9am – 10pm</span><span>Sister restaurant of The Bread Bar, TTDI &amp; Publika</span></div>
@@ -666,7 +694,7 @@
     else if (tok.startsWith('events-')) {
       const sub = tok.slice(7) === 'enquire' ? 'contact' : tok.slice(7); // old enquiry-form links land on the WhatsApp block
       target = $('#ev-' + sub);
-    } else if (!['home', 'menu', 'events'].includes(tok)) target = document.getElementById(tok);
+    } else if (!['home', 'menu', 'events'].includes(tok)) target = document.getElementById(tok === 'room' ? 'private-room' : tok); // old #room links land on the Private Dining Room
     const hdr = $('#hdr').offsetHeight + (want !== 'home' ? 56 : 0);
     const y = target ? target.getBoundingClientRect().top + scrollY - hdr - 8 : 0;
     scrollTo({ top: y, behavior: 'instant' });
@@ -683,5 +711,14 @@
   const forced = (location.search.match(/mode=(day|night)/) || [])[1]; // local review screenshots only
   setMode(forced || storedMode() || (st.meal === 'night' ? 'night' : 'day'));
   route();
+  /* deep links (#visit, #room...): the first jump runs before fonts/images settle and the browser's own fragment
+     scroll can land after it, so jump again once everything has loaded, unless the visitor has already moved */
+  if (location.hash.length > 1) {
+    let moved = false;
+    const stop = () => { moved = true; };
+    ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(e => addEventListener(e, stop, { once: true, passive: true }));
+    const again = () => document.fonts.ready.then(() => requestAnimationFrame(() => { if (!moved) route(); }));
+    if (document.readyState === 'complete') again(); else addEventListener('load', again, { once: true });
+  }
   setInterval(() => { $('#status-line').textContent = status().text; placeNowMarker(); }, 60e3);
 })();
